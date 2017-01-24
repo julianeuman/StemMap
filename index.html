@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+  </head>
+  <body>
+  <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-messaging.js"></script>
+<script>
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyC8ndOOfFMWgaSeXpdP92qOVzfSc8GzYyw",
+  authDomain: "map-vis.firebaseapp.com",
+  databaseURL: "https://map-vis.firebaseio.com",
+  storageBucket: "map-vis.appspot.com",
+  messagingSenderId: "900245293030"
+};
+firebase.initializeApp(config);
+</script>
+
+    <p>Enter names in the fields, then click "Submit" to submit the form:</p>
+
+    <form id="frm1" action="form_action.asp">
+      County: <input type="text" name="county"><br>
+      Number of Students Reached: <input type="text" name="numStudents"><br>
+      Type of Event: <input type="text" name="type"><br>
+      School: <input type="text" name="school"><br>
+      Year: <input type="text" name="year"><br><br>
+      <input type="submit" value="Submit"/>
+      <input type="text" name="text" id="text"/>
+    </form>
+
+
+    <script>
+
+
+
+    var database = firebase.database();
+    writeUserData(4, County, 000000, "STEM", "b", "c", 45, "d");
+
+    function writeUserData(number, county, date, details, organizer, school, studentsTaught, type) {
+        firebase.database().ref('Events/' + number).set({
+        county: county,
+        date: date,
+        details: details,
+        organizer: organizer,
+        school: school,
+        studentsTaught: studentsTaught,
+        type: type
+
+      });
+    }
+
+
+
+
+    </script>
+
+
+  </body>
+</html>
