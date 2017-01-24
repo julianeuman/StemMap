@@ -21,26 +21,28 @@ var config = {
 firebase.initializeApp(config);
 </script>
 
-    <p>Enter names in the fields, then click "Submit" to submit the form:</p>
+<form id="frm1" action="form_action.asp" onsubmit="submitFunction()">
+    County: <input type="text" id="county"><br>
+    Number of Students Reached: <input type="text" id = "numStudent"><br>
+    Type of Event: <input type="text" id="type"><br>
+    School: <input type="text" id="school"><br>
+    Date: <input type="text" id="date"><br><br>
+    <input type="submit" value="Submit"/>
 
-    <form id="frm1" action="form_action.asp">
-      County: <input type="text" name="county"><br>
-      Number of Students Reached: <input type="text" name="numStudents"><br>
-      Type of Event: <input type="text" name="type"><br>
-      School: <input type="text" name="school"><br>
-      Year: <input type="text" name="year"><br><br>
-      <input type="submit" value="Submit"/>
-      <input type="text" name="text" id="text"/>
-    </form>
+</form>
 
+<script>
 
-    <script>
+  var database = firebase.database();
+  function submitFunction() {
+    var countyVal = document.getElementbyID('county').value();
+    var numStudentsVal = document.getElementbyID('numStudent').value();
+    var eventVal = document.getElementbyID('type').value();
+    var schoolVal = document.getElementbyID('school').value();
+    var dateVal = document.getElementbyID('date').value();
+    writeUserData(4, countyVal, date, "details", "organizer", schoolVal, numStudentsVal, eventVal);
 
-
-
-    var database = firebase.database();
-    writeUserData(4, County, 000000, "STEM", "b", "c", 45, "d");
-
+  }
     function writeUserData(number, county, date, details, organizer, school, studentsTaught, type) {
         firebase.database().ref('Events/' + number).set({
         county: county,
@@ -57,7 +59,7 @@ firebase.initializeApp(config);
 
 
 
-    </script>
+  </script>
 
 
   </body>
