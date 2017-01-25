@@ -6,9 +6,6 @@
   </head>
   <body>
   <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-messaging.js"></script>
 <script>
 // Initialize Firebase
 var config = {
@@ -21,9 +18,9 @@ var config = {
 firebase.initializeApp(config);
 </script>
 
-<form id="frm1" action="form_action.asp" onsubmit="submitFunction()">
+<form id="frm1" onsubmit="submitFunction()">
     County: <input type="text" id="county"><br>
-    Number of Students Reached: <input type="text" id = "numStudent"><br>
+    Number of Students Reached: <input type="text" id = "numStudents"><br>
     Type of Event: <input type="text" id="type"><br>
     School: <input type="text" id="school"><br>
     Date: <input type="text" id="date"><br><br>
@@ -35,12 +32,12 @@ firebase.initializeApp(config);
 
   var database = firebase.database();
   function submitFunction() {
-    var countyVal = document.getElementbyID('county').value();
-    var numStudentsVal = document.getElementbyID('numStudent').value();
-    var eventVal = document.getElementbyID('type').value();
-    var schoolVal = document.getElementbyID('school').value();
-    var dateVal = document.getElementbyID('date').value();
-    writeUserData(4, countyVal, date, "details", "organizer", schoolVal, numStudentsVal, eventVal);
+    var countyVal = document.getElementById('county').value;
+    var numStudentsVal = document.getElementById('numStudents').value;
+    var eventVal = document.getElementById('type').value;
+    var schoolVal = document.getElementById('school').value;
+    var dateVal = document.getElementById('date').value;
+    writeUserData(4, countyVal, dateVal, "details", "organizer", schoolVal, numStudentsVal, eventVal);
 
   }
     function writeUserData(number, county, date, details, organizer, school, studentsTaught, type) {
