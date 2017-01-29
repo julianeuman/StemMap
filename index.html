@@ -1,63 +1,122 @@
-<!DOCTYPE html>
+<head>
+<title>Alabama Counties</title>
+<link rel="stylesheet" href="leaflet/leaflet.css" />
+<link rel="stylesheet" href="styles/main.css" />
+<link href="styles/nouislider.min.css" rel="stylesheet">
+<link href="ui/jquery-ui.css" rel="stylesheet">
+<script src="scripts/jquery.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<script src = "scripts/alabamacounties.js"></script>
+</head>
+
 <html>
-  <head>
-    <meta charset="utf-8">
-
-  </head>
-  <body>
-  <script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+<div id = "header" style = "width: 100%; height: 9%; background-color: #0278C8; margin-bottom: 1%">
+<p>UAH STEM Map</p></div>
+<div id = "sidebar" style = "background-color: #EEEEEE; height: 88%; width: 32%; float: left; margin-left: 1%">
+	<div id = "county-name"></div>
+</div>
+<div id="map" style = "float: right"></div>
+<script src="ui/external/jquery/jquery.js"></script>
+<script src="ui/jquery-ui.js"></script>
+<script src="leaflet/leaflet.js"></script>
 <script>
-// Initialize Firebase
-var config = {
-  apiKey: "AIzaSyC8ndOOfFMWgaSeXpdP92qOVzfSc8GzYyw",
-  authDomain: "map-vis.firebaseapp.com",
-  databaseURL: "https://map-vis.firebaseio.com",
-  storageBucket: "map-vis.appspot.com",
-  messagingSenderId: "900245293030"
-};
-firebase.initializeApp(config);
-</script>
+$(document).ready(function (){
+var map = L.map('map').setView([32.5502, -85.2023], 7.2);
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+			    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			    maxZoom: 18,
+			    id: 'emilysermons.2o2npk5o',
+			    accessToken: 'pk.eyJ1IjoiZW1pbHlzZXJtb25zIiwiYSI6ImNpeWM1dmVyejAwNGEzMnBlbmoxcTNsNnUifQ.Vn7bR2xDp1aR7k9f7zqvAg'
+			}).addTo(map);
 
-<form id="frm1" onsubmit="submitFunction()">
-    County: <input type="text" id="county"><br>
-    Number of Students Reached: <input type="text" id = "numStudents"><br>
-    Type of Event: <input type="text" id="type"><br>
-    School: <input type="text" id="school"><br>
-    Date: <input type="text" id="date"><br><br>
-    <input type="submit" value="Submit"/>
+	map.touchZoom.disable();
+	map.doubleClickZoom.disable();
+	map.scrollWheelZoom.disable();
+	map.boxZoom.disable();
+	map.keyboard.disable();
+			// L.geoJson(alCounties).addTo(map);
 
-</form>
+		
+		function highlightFeature(e) {
+			    var layer = e.target;
 
-<script>
+			    layer.setStyle({
+			    	fillColor: 'white',
+			        weight: 2,
+			        color: 'white',
+			        // color: '#f40539',
+			        dashArray: '',
+			        fillOpacity: 0.7
+			    });
 
-  var database = firebase.database();
-  function submitFunction() {
-    var countyVal = document.getElementById('county').value;
-    var numStudentsVal = document.getElementById('numStudents').value;
-    var eventVal = document.getElementById('type').value;
-    var schoolVal = document.getElementById('school').value;
-    var dateVal = document.getElementById('date').value;
-    writeUserData(4, countyVal, dateVal, "details", "organizer", schoolVal, numStudentsVal, eventVal);
+			    if (!L.Browser.ie && !L.Browser.opera) {
+			        layer.bringToFront();
+			    }
+			    // document.getElementById('county-name').innerHTML = ;
+		}
 
-  }
-    function writeUserData(number, county, date, details, organizer, school, studentsTaught, type) {
-        firebase.database().ref('Events/' + number).set({
-        county: county,
-        date: date,
-        details: details,
-        organizer: organizer,
-        school: school,
-        studentsTaught: studentsTaught,
-        type: type
+		function writeName(feature) {
+			document.getElementById('county-name').innerHTML = feature.properties.name;
+		}
 
-      });
-    }
+		function eraseName(feature) {
+			document.getElementById('county-name').innerHTML = "";
+		}
 
+		function countyName(feature) {
+			return feature.properties.name;
+		}
 
+		function resetHighlight(e) {
+			    alCount.resetStyle(e.target);
+		}
 
+		function onEachFeature(feature, layer) {
+			    layer.on({
+			        mouseover: function(e) {
+			        	highlightFeature(e);
+			        	writeName(feature);
+			        },
+			        // highlightFeature,
+			        mouseout: function (e) {
+			        	resetHighlight(e);
+			        	eraseName(feature);
+			        }
+			    });
+		}
 
-  </script>
+		var alCount = 	L.geoJson(alCounties, 
+						{style: function(feature) {
+						return {
+							fillColor: '#0278C8',
+					        weight: 2,
+					        opacity: 1,
+					        color: 'white',
+					        dashArray: '3',
+					        fillOpacity: 0.95
+				    	}
+					},
+					onEachFeature: onEachFeature
+				})
+				alCount.addTo(map);
+		})
+		// var alCount = L.geoJson();
 
-
-  </body>
+		// var alCount = 	L.geoJson(alCounties 
+					// {style: function(feature) {
+					// 	return {
+					// 		fillColor: 'blue',
+					//         weight: 1,
+					//         opacity: 1,
+					//         color: 'blue',
+					//         dashArray: '3',
+					//         fillOpacity: 0.8
+				 //    	}
+					// }
+				// );
+				// alCount.addTo(map);
+	</script>
+</body>
 </html>
