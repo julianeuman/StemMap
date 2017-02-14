@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+  </head>
+  <body>
+  <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-database.js"></script>
+<script>
+// Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCZk4Vjtr88SHEa0q7SptQXIOBUY4uf854",
+    authDomain: "test-vis.firebaseapp.com",
+    databaseURL: "https://test-vis.firebaseio.com",
+    storageBucket: "test-vis.appspot.com",
+    messagingSenderId: "930433700814"
+  };
+firebase.initializeApp(config);
+</script>
+
+<select id = "county">
+  <option value="pickens">Pickens</option>
+  <option value="mont">Montgomery</option>
+</select>
+
+<form id="frm1" onsubmit="submitFunction()">
+    <!-- County: <input type="text" id="county"><br> -->
+    Number of Students Reached: <input type="text" id = "numStudents"><br>
+    Type of Event: <input type="text" id="type"><br>
+    School: <input type="text" id="school"><br>
+    Date: <input type="text" id="date"><br><br>
+    <input type="submit" value="Submit"/>
+
+</form>
+
+<script>
+
+  var database = firebase.database();
+  function submitFunction() {
+    var county = document.getElementById('county').value;
+    var numStudentsVal = document.getElementById('numStudents').value;
+    var eventVal = document.getElementById('type').value;
+    var schoolVal = document.getElementById('school').value;
+    var dateVal = document.getElementById('date').value;
+    // writeUserData(dateVal, schoolVal, numStudentsVal, eventVal, county);
+
+  }
+    function writeUserData(date, school, studentsTaught, type, county) {
+              // firebase.database().ref('Montgomery/event5').set({
+              //   date: date,
+              //   students: studentsTaught,
+              //   type: type,
+              //   school: school
+              // });
+        if(county == "mont") {
+              firebase.database().ref('Montgomery/' + 'event6').set({
+              date: date,
+              students: studentsTaught,
+              type: type,
+              school: school
+              });
+        } else {
+              firebase.database().ref('Pickens/' + 'event6').set({
+              date: date,
+              students: studentsTaught,
+              type: type,
+              school: school
+              });
+        }
+    }
+
+
+
+
+  </script>
+
+
+  </body>
+</html>

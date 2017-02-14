@@ -5,10 +5,27 @@
 <link href="styles/nouislider.min.css" rel="stylesheet">
 <link href="ui/jquery-ui.css" rel="stylesheet">
 <script src="scripts/jquery.js"></script>
+<script src="d3/d3.js"></script>
+<script src="d3/d3-tip-v0.6.7.js"></script>
 <script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
 <link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 <script src = "scripts/alabamacounties.js"></script>
+<script src = "scripts/info.json"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
+<!--   <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-database.js"></script> -->
+  <script>
+// Initialize Firebase
+  	var config = {
+	    apiKey: "AIzaSyCZk4Vjtr88SHEa0q7SptQXIOBUY4uf854",
+	    authDomain: "test-vis.firebaseapp.com",
+	    databaseURL: "https://test-vis.firebaseio.com",
+	    storageBucket: "test-vis.appspot.com",
+	    messagingSenderId: "930433700814"
+  	};
+	firebase.initializeApp(config);
+</script>
 </head>
 
 <html>
@@ -54,10 +71,41 @@ var map = L.map('map').setView([32.5502, -85.2023], 7.2);
 			    if (!L.Browser.ie && !L.Browser.opera) {
 			        layer.bringToFront();
 			    }
-			    // document.getElementById('county-name').innerHTML = ;
 		}
 
+// 		var myDB = firebase.database().ref();
+
+// 		firebase.database().ref("/appointments").orderByChild("doctor").equalTo(doctorId).on("value", function(snapshot) {
+//     snapshot.forEach(function(childSnapshot) {
+//         // key
+//         var key = childSnapshot.key;
+//         // value, could be object
+//         var childData = childSnapshot.val();
+//         // Do what you want with these key/values here
+//         ...
+//     });
+// });
+
+		// var myDB = firebase.database().ref("/Blount").orderByChild("numStudents").on("value", function(snapshot) {
+		// 	snapshot.forEach(function(childSnapshot) {
+		// 		console.log()
+		// 	})
+		// });
+
+		// Query queryRef = myFirebaseRef.orderByChild("fullName").equalTo("gooner");
+
+		var myDB = firebase.database().ref("Blount").orderByChild("numStudents").equalTo(50);
+
+		myDB.on('value', snapshot => {
+  			console.log(snapshot.val());
+  			console.log(snapshot.child().val());
+		});
+
+
+
+
 		function writeName(feature) {
+			var countyname = feature.properties.name;
 			document.getElementById('county-name').innerHTML = feature.properties.name;
 		}
 
@@ -102,21 +150,7 @@ var map = L.map('map').setView([32.5502, -85.2023], 7.2);
 				})
 				alCount.addTo(map);
 		})
-		// var alCount = L.geoJson();
 
-		// var alCount = 	L.geoJson(alCounties 
-					// {style: function(feature) {
-					// 	return {
-					// 		fillColor: 'blue',
-					//         weight: 1,
-					//         opacity: 1,
-					//         color: 'blue',
-					//         dashArray: '3',
-					//         fillOpacity: 0.8
-				 //    	}
-					// }
-				// );
-				// alCount.addTo(map);
 	</script>
 </body>
 </html>
