@@ -1,0 +1,32 @@
+[
+    {
+        "event_name": "Pickens County Highschool Roadshow",
+        "location": "Pickens County High",
+        "date": "2/7/2017",
+        "year": "2017",
+        "num_students" : "50",
+        "grade":"9-12",
+        "type": "Roadshow",
+        "county": "Pickens"
+    },
+    {
+        "event_name": "Pickens County Middle SPARCC",
+        "location": "Pickens County Middle",
+        "date": "6/7/2015",
+        "year": "2015",
+        "num_students" : "150",
+        "grade":"6-8",
+        "type": "SPARCC",
+        "county": "Pickens"
+    },
+    {
+        "event_name": "Pickens County UAH Event",
+        "location": "Pickens County Auditorium",
+        "date": "5/5/2016",
+        "year": "2016",
+        "num_students" : "500",
+        "grade":"9-12",
+        "type": "Admissions",
+        "county": "Pickens"
+    }
+]

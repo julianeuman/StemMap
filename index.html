@@ -11,6 +11,7 @@
 <link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 <script src = "scripts/alabamacounties.js"></script>
+<script src = "scripts/test.json"></script>
 <script src = "scripts/info.json"></script>
   <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
 <!--   <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js"></script>
@@ -33,6 +34,7 @@
 <p>UAH STEM Map</p></div>
 <div id = "sidebar" style = "background-color: #EEEEEE; height: 88%; width: 32%; float: left; margin-left: 1%">
 	<div id = "county-name"></div>
+	<div id = "svg_container"></div>
 </div>
 <div id="map" style = "float: right"></div>
 <script src="ui/external/jquery/jquery.js"></script>
@@ -73,33 +75,13 @@ var map = L.map('map').setView([32.5502, -85.2023], 7.2);
 			    }
 		}
 
-// 		var myDB = firebase.database().ref();
 
-// 		firebase.database().ref("/appointments").orderByChild("doctor").equalTo(doctorId).on("value", function(snapshot) {
-//     snapshot.forEach(function(childSnapshot) {
-//         // key
-//         var key = childSnapshot.key;
-//         // value, could be object
-//         var childData = childSnapshot.val();
-//         // Do what you want with these key/values here
-//         ...
-//     });
-// });
+		// var myDB = firebase.database().ref("Blount").orderByChild("numStudents").equalTo(50);
 
-		// var myDB = firebase.database().ref("/Blount").orderByChild("numStudents").on("value", function(snapshot) {
-		// 	snapshot.forEach(function(childSnapshot) {
-		// 		console.log()
-		// 	})
+		// myDB.on('value', snapshot => {
+  // 			console.log(snapshot.val());
+  // 			console.log(snapshot.child().val());
 		// });
-
-		// Query queryRef = myFirebaseRef.orderByChild("fullName").equalTo("gooner");
-
-		var myDB = firebase.database().ref("Blount").orderByChild("numStudents").equalTo(50);
-
-		myDB.on('value', snapshot => {
-  			console.log(snapshot.val());
-  			console.log(snapshot.child().val());
-		});
 
 
 
