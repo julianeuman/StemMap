@@ -31,9 +31,105 @@ body {
 #county-name {
   font-family: 'Open Sans', sans-serif;
   font-size: 20px;
-  color: #959595;;
-  margin-top: 50%;
+  color: #0278C8;
+  font-weight: 600;
+  margin-top: 10%;
   text-align: center;
+}
+
+#no-data {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  color: #959595;;
+  font-weight: 600;
+  margin-top: 40%;
+  text-align: center;
+}
+
+#num-events {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  color: #959595;;
+  font-weight: 600;
+  margin-top: 2%;
+  text-align: center;
+}
+
+ #my-legend .legend-scale ul {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    font-family: 'Open Sans', sans-serif;
+    }
+  #my-legend .legend-scale ul li {
+    display: block;
+    float: left;
+    font-size: 80%;
+    list-style: none;
+    margin-left: 0;
+    line-height: 18px;
+    margin-bottom: 2px;
+    font-family: 'Open Sans', sans-serif;
+    }
+  #my-legend ul.legend-labels li span {
+    display: block;
+    float: left;
+    height: 20px;
+    width: 20px;
+    margin-right: 5px;
+    margin-left: 0;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    }
+
+  #my-legend a {
+    color: #eee;
+    font-family: 'Open Sans', sans-serif;
+    }
+
+
+#info {
+
+  /*display: inline;*/
+  float: right;
+  width: 30%;
+  height: 100%;
+  color: #FFF;
+  font-family: sans-serif;
+  padding-right: 0px;
+  background-color: #101010;
+  font-size: .7em;
+}
+
+
+#info p {
+
+}
+
+#info img {
+    display : block;
+    margin : auto;
+    cursor: pointer; cursor: hand;
+      padding-left: 12px;
+}
+
+.legend {
+    line-height: 18px;
+    color: #0278C8;
+    background-color: #fff;
+    border: 1px solid #0278C8;
+    padding: 10px;
+    font-family: 'Open Sans', sans-serif;
+
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+    font-family: 'Open Sans', sans-serif;
 }
 
 hr {

@@ -12,10 +12,7 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 <script src = "scripts/alabamacounties.js"></script>
 <script src = "scripts/test.json"></script>
-<script src = "scripts/info.json"></script>
   <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
-<!--   <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/3.6.2/firebase-database.js"></script> -->
   <script>
 // Initialize Firebase
   	var config = {
@@ -33,8 +30,20 @@
 <div id = "header" style = "width: 100%; height: 9%; background-color: #0278C8; margin-bottom: 1%">
 <p>UAH STEM Map</p></div>
 <div id = "sidebar" style = "background-color: #EEEEEE; height: 88%; width: 32%; float: left; margin-left: 1%">
-	<div id = "county-name"></div>
-	<div id = "svg_container"></div>
+	<div id = "county-name">Hover over a county to learn more</div>
+	<div id = "num-events"></div>
+	<div id = "no-data" style = "display: none">No data available for this county</div>
+	<div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 40px;"></div>
+	<div id = "my-legend" style = "margin-left: 85px; margin-top: 30px; display: none;">
+	<div class='legend-scale'>
+		  <ul class='legend-labels'>
+		    <li><span style='background:#F27973; margin-left: 10px;'></span>SPARCC</li>
+		    <li><span style='background:#FAED3A; margin-left: 10px;'></span>Admissions</li>
+		    <li><span style='background:#8CC646; margin-left: 10px;'></span>Roadshow</li>
+		  </ul>
+		  </div>
+</div>
+	</div>
 </div>
 <div id="map" style = "float: right"></div>
 <script src="ui/external/jquery/jquery.js"></script>
@@ -42,7 +51,7 @@
 <script src="leaflet/leaflet.js"></script>
 <script>
 $(document).ready(function (){
-var map = L.map('map').setView([32.5502, -85.2023], 7.2);
+var map = L.map('map').setView([32.5502, -86.2023], 7.2);
 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
 			    maxZoom: 18,
@@ -55,11 +64,53 @@ var map = L.map('map').setView([32.5502, -85.2023], 7.2);
 	map.scrollWheelZoom.disable();
 	map.boxZoom.disable();
 	map.keyboard.disable();
+
+			var legend = L.control({position: 'bottomright'});
+
+			legend.onAdd = function (map) {
+
+			var div = L.DomUtil.create('div', 'info legend'),
+			    grades = [90000, 1000000, 2000000, 3000000, 4000000, 5000000, 6000000],
+			    labels = [];
+
+			    // loop through our density intervals and generate a label with a colored square for each interval
+			div.innerHTML = '<strong><center>Number of Events</strong></center>' + '<br>' +
+			    				'<i style="background:'+getColor2(0) + '"></i> ' + '0 events' + '<br>' +
+			    				'<i style="background:'+getColor2(1) + '"></i> ' + '1 event' + '<br>' +
+			    				'<i style="background:'+getColor2(2) + '"></i> ' + '2 events' + '<br>' +
+			    				'<i style="background:'+getColor2(3) + '"></i> ' + '3 events' + '<br>' +
+			    				'<i style="background:'+getColor2(4) + '"></i> ' + '4 events' + '<br>' +
+			    				'<i style="background:'+getColor2(5) + '"></i> ' + '5 events' + '<br>' +
+			    				'<i style="background:'+getColor2(6) + '"></i> ' + '6 events' + '<br>' +
+			    				'<i style="background:'+getColor2(7) + '"></i> ' + '7 events' + '<br>' +
+			    				'<i style="background:'+getColor2(8) + '"></i> ' + '8 events' + '<br>' +
+			    				'<i style="background:'+getColor2(9) + '"></i> ' + '9+ events';
+			    return div;
+			};
+
+			legend.addTo(map);
 			// L.geoJson(alCounties).addTo(map);
 
 		
 		function highlightFeature(e) {
 			    var layer = e.target;
+
+			    layer.setStyle({
+			    	fillColor: 'grey',
+			        weight: 2,
+			        color: 'white',
+			        // color: '#f40539',
+			        dashArray: '',
+			        fillOpacity: 0.7
+			    });
+
+			    if (!L.Browser.ie && !L.Browser.opera) {
+			        layer.bringToFront();
+			    }
+		}
+
+		function clickHighlight(e) {
+				var layer = e.target;
 
 			    layer.setStyle({
 			    	fillColor: 'white',
@@ -83,44 +134,215 @@ var map = L.map('map').setView([32.5502, -85.2023], 7.2);
   // 			console.log(snapshot.child().val());
 		// });
 
+function showPie(feature) {
+
+    var dataset = [
+
+    	{county:"Blount",eventName:"Hayden High School 11/13/2015",location:"Hayden High School",num_students:75,grade:"8-12",date:"11/13/15",event_name:"Hayden High School",type:"Roadshow"},
+		{county:"Blount",eventName:"Hayden High School  11/04/2016",location:"Hayden High School",num_students:50,grade:"8-12",date:"11/4/16",event_name:"Hayden High School ",type:"Admissions"},
+		{county:"Colbert",eventName:"Covenant Christian School 09/23/2016",location:"Covenanr School Library",num_students:60,grade:"9-12",date:"9/23/16",event_name:"Covenant Christian School",type:"SPARCC"},
+		{county:"Cullman",eventName:"Cullman Career Center 02/06/2015",location:"Cullman Career Center",num_students:75,grade:"10-12",date:"2/6/15",event_name:"Cullman Career Center",type:"Roadshow"},
+		{county:"Cullman",eventName:"Westpoint  Intermediate  School 05/13/2016",location:"Westpoint Intermediate School",num_students:300,grade:"4-5",date:"5/13/16",event_name:"Westpoint  Intermediate  School",type:"SPARCC"},
+		{county:"Cullman",eventName:"Wallace State Community College 07/20/2016",location:"Harlan G Allen Math Building",num_students:60,grade:"Two-year institute",date:"7/20/16",event_name:"Wallace State Community College",type:"Admissions"},
+		{county:"Cullman",eventName:"Wallace State Community College 10/20/2016",location:"Harlan G Allen Math Building",num_students:50,grade:"Two-year institute",date:"10/20/16",event_name:"Wallace State Community College",type:"SPARCC"},
+		{county:"DeKalb",eventName:"Northeast Alabama Community College 10/23/2015",location:"Northeast Alabama Community College",num_students:75,grade:"Community College",date:"10/23/15",event_name:"Northeast Alabama Community College",type:"Admissions"},
+		{county:"DeKalb",eventName:"4TH Annual Made in DeKalb Expo 11/05/2015",location:"Northeast Alabama Agribusiness Center ",num_students:2100,grade:"9-12",date:"11/5/15",event_name:"4TH Annual Made in DeKalb Expo",type:"Roadshow"},
+		{county:"Fayette",eventName:"Bevill State Community College Career Fair 03/13/2015",location:"Bevill State Community College",num_students:null,grade:"11",date:"3/13/15",event_name:"Bevill State Community College Career Fair",type:"Roadshow"},
+		{county:"Franklin",eventName:"Russellville High School 10/28/2016",location:"Russellville High School",num_students:50,grade:"8-12",date:"10/28/16",event_name:"Russellville High School",type:"SPARCC"},
+		{county:"Greene",eventName:"Greene County Visit 04/29/2016",location:"Greene County High School",num_students:125,grade:"6-12",date:"4/29/16",event_name:"Greene County Visit",type:"Admissions"},
+		{county:"Jackson",eventName:"Career Opportunities Exploration Expo 10/27/2015",location:"Jackson County Fairgrounds",num_students:700,grade:"9",date:"10/27/15",event_name:"Career Opportunities Exploration Expo",type:"Admissions"},
+		{county:"Jackson",eventName:"Skyline Elementary School 02/26/2016",location:"Skyline Elementary School",num_students:38,grade:"3",date:"2/26/16",event_name:"Skyline Elementary School",type:"Admissions"},
+		{county:"Jackson",eventName:"STEM Outreach - Skyline High School 04/08/2016",location:"Skyline High School",num_students:30,grade:"9-12",date:"4/8/16",event_name:"STEM Outreach - Skyline High School",type:"Roadshow"},
+		{county:"Jackson",eventName:"Collins Intermediate School 06/15/2016",location:"Collins Intermediate School",num_students:150,grade:"K-6",date:"6/15/16",event_name:"Collins Intermediate School",type:"SPARCC"},
+		{county:"Madison",eventName:"Madison City Schools Visit 04/12/2016",location:"SMAP ELMER Lab",num_students:34,grade:"11-12",date:"4/12/16",event_name:"Madison City Schools Visit",type:"SPARCC"},
+		{county:"Madison",eventName:"Robotics Outreach 05/05/2016",location:"SMAP ELMER Lab",num_students:17,grade:"9-12",date:"5/5/16",event_name:"Robotics Outreach",type:"Admissions"},
+		{county:"Madison",eventName:"Blount County visit  10/05/2016",location:"SMAP ",num_students:15,grade:"Administrators",date:"10/5/16",event_name:"Blount County visit ",type:"SPARCC"},
+		{county:"Madison",eventName:"Mechanical and Aerospace Engineering open house 10/29/2016",location:"Olin B King Technology Hall",num_students:50,grade:"8-12",date:"10/29/16",event_name:"Mechanical and Aerospace Engineering open house",type:"Roadshow"},
+		{county:"Madison",eventName:"Bob Jones High School 11/17/2016",location:"SMAP UAH",num_students:40,grade:"9-12",date:"11/17/16",event_name:"Bob Jones High School",type:"Roadshow"},
+		{county:"Madison",eventName:"Chapman Middle School 11/08/2016",location:"SMAP UAH",num_students:25,grade:"6-7",date:"11/8/16",event_name:"Chapman Middle School",type:"Roadshow"},
+		{county:"Marshall",eventName:"KDS DAR School  01/29/2016",location:"Kate Duncan Smith DAR School",num_students:900,grade:"5-12",date:"1/29/16",event_name:"KDS DAR School ",type:"Admissions"},
+		{county:"Marshall",eventName:"DAR Middle School Engineering Club 04/13/2016",location:"Kate Duncan Smith DAR School",num_students:18,grade:"6-8",date:"4/13/16",event_name:"DAR Middle School Engineering Club",type:"Roadshow"},
+		{county:"Pickens",eventName:"Pickens County Career Fair 12/11/2014",location:"Pickens County Multi-Service Center ",num_students:700,grade:"9-12",date:"12/11/14",event_name:"Pickens County Career Fair",type:"SPARCC"},
+		{county:"Pickens",eventName:"Pickens County Career Fair 03/10/2016",location:"Pickens County Multi-Service Center ",num_students:400,grade:"9-12",date:"3/10/16",event_name:"Pickens County Career Fair",type:"SPARCC"},
+		{county:"Randolph",eventName:"Randolph County High School  03/04/2016",location:"Randolph County High School ",num_students:430,grade:"7-12",date:"3/4/16",event_name:"Randolph County High School ",type:"Roadshow"},
+		{county:"Talladega",eventName:"ASD Career Day 2014 02/05/2014",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/5/14",event_name:"ASD Career Day 2014",type:"Admissions"},
+		{county:"Talladega",eventName:"ASD Career Day 2015 03/20/2015",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"3/20/15",event_name:"ASD Career Day 2015",type:"Roadshow"},
+		{county:"Talladega",eventName:"ASD Career Day 2016 02/26/2016",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/26/16",event_name:"ASD Career Day 2016",type:"SPARCC"},
+		{county:"Walker",eventName:"Curry High School 10/07/2016",location:"Walker County",num_students:300,grade:"9-12",date:"10/7/16",event_name:"Curry High School",type:"Roadshow"},
+		{county:"Winston",eventName:"Haleyville High School 04/24/2015",location:"Haleyville Center of Technology",num_students:500,grade:"9-12",date:"4/24/15",event_name:"Haleyville High School",type:"SPARCC"},
+		{county:"Winston",eventName:"Winston County Technical Center  05/08/2015",location:"Winston County Technical Center",num_students:null,grade:"",date:"5/8/15",event_name:"Winston County Technical Center ",type:"Admissions"}
+	];
+
+        var filteredData = dataset.filter(function(item) {
+        		return item.county == feature.properties.name;
+        });
+
+        if(filteredData.length == 0) {
+        	showNoData();
+        } else {
+
+        	hideNoData();
+        	document.getElementById('my-legend').style.display = 'block';
+
+	        var map = {};
+
+	        filteredData.forEach(function(item) {
+	        	if (!map[item.type]) {
+	        		map[item.type] = 0
+	        	}
+	        	map[item.type]++;
+	        });
+
+	        var d3Ready = Object.keys(map).map(function(item) {
+	        	return {
+	        		label: item,
+	        		count: map[item],
+	        	}
+	        });
+
+	       	var width = 200;
+	        var height = 200;
+	        var radius = Math.min(width, height) / 2;
+
+	        var svg = d3.select('#svg_container')
+	          .append('svg')
+	          .attr('width', width)
+	          .attr('height', height)
+	          .append('g')
+	          .attr('transform', 'translate(' + (width / 2) +
+	            ',' + (height / 2) + ')');
+
+	        var arc = d3.svg.arc()
+	          .innerRadius(0)
+	          .outerRadius(radius);
+
+	        var nestedData = d3.nest()
+	        	.key(function(d) {return d.county; })
+	        	.rollup(function(v) { return {
+	        		SPARCC: d3.sum(v, function(d) { return d.SPARCC; }),
+	        		Admissions: d3.sum(v, function(d) { return d.Admissions; }),
+	        		Roadshow: d3.sum(v, function(d) { return d.Roadshow; })
+	        	};
+	        	})
+	        	.entries(dataset);
 
 
 
-		function writeName(feature) {
-			var countyname = feature.properties.name;
-			document.getElementById('county-name').innerHTML = feature.properties.name;
-		}
+	        var pie = d3.layout.pie()
+	          .value(function(d) {return d.count; })
+	          .sort(null);
 
-		function eraseName(feature) {
-			document.getElementById('county-name').innerHTML = "";
-		}
+	            var tooltip = d3.select("#svg_container").append("div")
+	            .attr("class", "tooltip")
+	            .style("opacity", 0);
 
-		function countyName(feature) {
-			return feature.properties.name;
-		}
 
-		function resetHighlight(e) {
+	        var path = svg.selectAll('path')
+	          .data(pie(d3Ready))
+	          .enter()
+	          .append('path')
+	          .attr('d', arc)
+	          .attr('fill', function(d) {
+	          	if(d.data.label == "SPARCC") {
+	          		return '#F27973';
+	          	} else if (d.data.label == "Admissions") {
+	          		return '#FAED3A';
+	          	} else {
+	          		return '#8CC646';
+	          	}
+	        })
+
+	        path.append("svg:text")
+		      .attr("transform", function(d) { //set the label's origin to the center of the arc
+		        //we have to make sure to set these before calling arc.centroid
+		        d.outerRadius = radius + 50; // Set Outer Coordinate
+		        d.innerRadius = radius + 45; // Set Inner Coordinate
+		        return "translate(" + arc.centroid(d) + ")";
+		      })
+		      .attr("text-anchor", "middle") //center the text on it's origin
+		      .style("fill", "Purple")
+		      .style("font", "bold 12px Arial")
+		      .text(function(d, i) { return d3Ready[i].label; });
+
+	        path.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
+		      .attr("dy", ".35em")
+		      .attr("text-anchor", "middle")
+		      //.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")"; })
+		      .attr("transform", function(d) { //set the label's origin to the center of the arc
+		        //we have to make sure to set these before calling arc.centroid
+		        d.outerRadius = radius; // Set Outer Coordinate
+		        d.innerRadius = radius/2; // Set Inner Coordinate
+		        return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")";
+		      })
+		      .style("fill", "black")
+		      .style("font", "bold 12px Arial")
+		      .text(function(d) { return d.data.count; });
+
+			    function angle(d) {
+      				var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+      				return a > 90 ? a - 180 : a;
+    			}
+	      }
+    }
+
+    function hidePie(feature) {
+    	$('#svg_container').empty();
+    	document.getElementById('my-legend').style.display = 'none';
+    	document.getElementById('num-events').style.display = 'none';
+    }
+
+    function showNoData() {
+    	document.getElementById('no-data').style.display = 'block';
+    	document.getElementById('num-events').style.display = 'none';
+    }
+
+    function hideNoData() {
+    	document.getElementById('no-data').style.display = 'none';
+    	document.getElementById('num-events').style.display = 'block';
+    }
+
+
+	function writeName(feature) {
+		var countyname = feature.properties.name;
+		document.getElementById('county-name').innerHTML = feature.properties.name + " County";
+		document.getElementById('num-events').innerHTML = feature.properties.num + " events total"
+
+	}
+
+	function eraseName(feature) {
+		document.getElementById('county-name').innerHTML = "Hover over a county to learn more";
+		document.getElementById('num-events').innerHTML = "";
+	}
+
+	function countyName(feature) {
+		return feature.properties.name;
+	}
+
+	function resetHighlight(e) {
 			    alCount.resetStyle(e.target);
-		}
+	}
 
-		function onEachFeature(feature, layer) {
-			    layer.on({
-			        mouseover: function(e) {
-			        	highlightFeature(e);
-			        	writeName(feature);
-			        },
-			        // highlightFeature,
-			        mouseout: function (e) {
-			        	resetHighlight(e);
-			        	eraseName(feature);
-			        }
-			    });
-		}
+	function onEachFeature(feature, layer) {
+		    layer.on({
+		        mouseover: function(e) {
+		        	highlightFeature(e);
+		        	writeName(feature);
+		        	showPie(feature);
+		        },
+		        mouseout: function (e) {
+		        	hideNoData();
+		        	resetHighlight(e);
+		        	eraseName(feature);
+		        	hidePie();
+		        }
+		    });
+	}
 
 		var alCount = 	L.geoJson(alCounties, 
 						{style: function(feature) {
+							var color = getColor(feature);
 						return {
-							fillColor: '#0278C8',
+							fillColor: color,
 					        weight: 2,
 					        opacity: 1,
 					        color: 'white',
@@ -132,6 +354,18 @@ var map = L.map('map').setView([32.5502, -85.2023], 7.2);
 				})
 				alCount.addTo(map);
 		})
+
+	function getColor(feature) {
+		// var rand = Math.floor((Math.random() * 10));
+		// var colors = ["#0278C8", "#0A82CF", "#2B8FD3", "#449BD6", "#5FA8DB", "#78B4DF", "#90C0E3", "#A9CDE6", "#C1DAEB", "#D9E5ED"];
+		var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"]; 
+		return colors[feature.properties.num];
+	}
+
+	function getColor2(num) {
+		var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"]; 
+		return colors[num];
+	}
 
 	</script>
 </body>
