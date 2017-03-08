@@ -46,11 +46,31 @@
 	</div>
 </div>
 <div id="map" style = "float: right"></div>
+<form id='years'>
+	<!-- Each of these checkboxes needs an onclick method that activates a boolean that we can check. I've done 2015 for you. Go to line 62-->
+  <div><input type='checkbox' name='filters' value='2013' checked>2013</div>
+  <div><input type='checkbox' name='filters' value='2014' checked>2014</div>
+  <div><input type='checkbox' name='filters' value='2015' onclick='filter2015();' checked>2015</div>
+  <div><input type='checkbox' name='filters' value='2016' checked>2016</div>
+  <div><input type='checkbox' name='filters' value='2017' checked>2017</div>
+</form>
 <script src="ui/external/jquery/jquery.js"></script>
 <script src="ui/jquery-ui.js"></script>
 <script src="leaflet/leaflet.js"></script>
 <script>
-$(document).ready(function (){
+
+var bool2015 = true; //since it's automatically "checked" at the beginning
+var filters = document.getElementById('years').filters; //getting the filter elements
+
+function filter2015() {
+	if(filters[2].checked) { //if 2015 is checked
+		bool2015 = true; //then it's true
+	} else {
+		bool2015 = false; //if not, false obviously
+	}
+	//go to line 198
+};
+
 var map = L.map('map').setView([32.5502, -86.2023], 7.2);
 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
 			    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -133,53 +153,67 @@ var map = L.map('map').setView([32.5502, -86.2023], 7.2);
   // 			console.log(snapshot.val());
   // 			console.log(snapshot.child().val());
 		// });
+var d3Ready;
+var totalCount;
 
 function showPie(feature) {
 
     var dataset = [
 
-    	{county:"Blount",eventName:"Hayden High School 11/13/2015",location:"Hayden High School",num_students:75,grade:"8-12",date:"11/13/15",event_name:"Hayden High School",type:"Roadshow"},
-		{county:"Blount",eventName:"Hayden High School  11/04/2016",location:"Hayden High School",num_students:50,grade:"8-12",date:"11/4/16",event_name:"Hayden High School ",type:"Admissions"},
-		{county:"Colbert",eventName:"Covenant Christian School 09/23/2016",location:"Covenanr School Library",num_students:60,grade:"9-12",date:"9/23/16",event_name:"Covenant Christian School",type:"SPARCC"},
-		{county:"Cullman",eventName:"Cullman Career Center 02/06/2015",location:"Cullman Career Center",num_students:75,grade:"10-12",date:"2/6/15",event_name:"Cullman Career Center",type:"Roadshow"},
-		{county:"Cullman",eventName:"Westpoint  Intermediate  School 05/13/2016",location:"Westpoint Intermediate School",num_students:300,grade:"4-5",date:"5/13/16",event_name:"Westpoint  Intermediate  School",type:"SPARCC"},
-		{county:"Cullman",eventName:"Wallace State Community College 07/20/2016",location:"Harlan G Allen Math Building",num_students:60,grade:"Two-year institute",date:"7/20/16",event_name:"Wallace State Community College",type:"Admissions"},
-		{county:"Cullman",eventName:"Wallace State Community College 10/20/2016",location:"Harlan G Allen Math Building",num_students:50,grade:"Two-year institute",date:"10/20/16",event_name:"Wallace State Community College",type:"SPARCC"},
-		{county:"DeKalb",eventName:"Northeast Alabama Community College 10/23/2015",location:"Northeast Alabama Community College",num_students:75,grade:"Community College",date:"10/23/15",event_name:"Northeast Alabama Community College",type:"Admissions"},
-		{county:"DeKalb",eventName:"4TH Annual Made in DeKalb Expo 11/05/2015",location:"Northeast Alabama Agribusiness Center ",num_students:2100,grade:"9-12",date:"11/5/15",event_name:"4TH Annual Made in DeKalb Expo",type:"Roadshow"},
-		{county:"Fayette",eventName:"Bevill State Community College Career Fair 03/13/2015",location:"Bevill State Community College",num_students:null,grade:"11",date:"3/13/15",event_name:"Bevill State Community College Career Fair",type:"Roadshow"},
-		{county:"Franklin",eventName:"Russellville High School 10/28/2016",location:"Russellville High School",num_students:50,grade:"8-12",date:"10/28/16",event_name:"Russellville High School",type:"SPARCC"},
-		{county:"Greene",eventName:"Greene County Visit 04/29/2016",location:"Greene County High School",num_students:125,grade:"6-12",date:"4/29/16",event_name:"Greene County Visit",type:"Admissions"},
-		{county:"Jackson",eventName:"Career Opportunities Exploration Expo 10/27/2015",location:"Jackson County Fairgrounds",num_students:700,grade:"9",date:"10/27/15",event_name:"Career Opportunities Exploration Expo",type:"Admissions"},
-		{county:"Jackson",eventName:"Skyline Elementary School 02/26/2016",location:"Skyline Elementary School",num_students:38,grade:"3",date:"2/26/16",event_name:"Skyline Elementary School",type:"Admissions"},
-		{county:"Jackson",eventName:"STEM Outreach - Skyline High School 04/08/2016",location:"Skyline High School",num_students:30,grade:"9-12",date:"4/8/16",event_name:"STEM Outreach - Skyline High School",type:"Roadshow"},
-		{county:"Jackson",eventName:"Collins Intermediate School 06/15/2016",location:"Collins Intermediate School",num_students:150,grade:"K-6",date:"6/15/16",event_name:"Collins Intermediate School",type:"SPARCC"},
-		{county:"Madison",eventName:"Madison City Schools Visit 04/12/2016",location:"SMAP ELMER Lab",num_students:34,grade:"11-12",date:"4/12/16",event_name:"Madison City Schools Visit",type:"SPARCC"},
-		{county:"Madison",eventName:"Robotics Outreach 05/05/2016",location:"SMAP ELMER Lab",num_students:17,grade:"9-12",date:"5/5/16",event_name:"Robotics Outreach",type:"Admissions"},
-		{county:"Madison",eventName:"Blount County visit  10/05/2016",location:"SMAP ",num_students:15,grade:"Administrators",date:"10/5/16",event_name:"Blount County visit ",type:"SPARCC"},
-		{county:"Madison",eventName:"Mechanical and Aerospace Engineering open house 10/29/2016",location:"Olin B King Technology Hall",num_students:50,grade:"8-12",date:"10/29/16",event_name:"Mechanical and Aerospace Engineering open house",type:"Roadshow"},
-		{county:"Madison",eventName:"Bob Jones High School 11/17/2016",location:"SMAP UAH",num_students:40,grade:"9-12",date:"11/17/16",event_name:"Bob Jones High School",type:"Roadshow"},
-		{county:"Madison",eventName:"Chapman Middle School 11/08/2016",location:"SMAP UAH",num_students:25,grade:"6-7",date:"11/8/16",event_name:"Chapman Middle School",type:"Roadshow"},
-		{county:"Marshall",eventName:"KDS DAR School  01/29/2016",location:"Kate Duncan Smith DAR School",num_students:900,grade:"5-12",date:"1/29/16",event_name:"KDS DAR School ",type:"Admissions"},
-		{county:"Marshall",eventName:"DAR Middle School Engineering Club 04/13/2016",location:"Kate Duncan Smith DAR School",num_students:18,grade:"6-8",date:"4/13/16",event_name:"DAR Middle School Engineering Club",type:"Roadshow"},
-		{county:"Pickens",eventName:"Pickens County Career Fair 12/11/2014",location:"Pickens County Multi-Service Center ",num_students:700,grade:"9-12",date:"12/11/14",event_name:"Pickens County Career Fair",type:"SPARCC"},
-		{county:"Pickens",eventName:"Pickens County Career Fair 03/10/2016",location:"Pickens County Multi-Service Center ",num_students:400,grade:"9-12",date:"3/10/16",event_name:"Pickens County Career Fair",type:"SPARCC"},
-		{county:"Randolph",eventName:"Randolph County High School  03/04/2016",location:"Randolph County High School ",num_students:430,grade:"7-12",date:"3/4/16",event_name:"Randolph County High School ",type:"Roadshow"},
-		{county:"Talladega",eventName:"ASD Career Day 2014 02/05/2014",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/5/14",event_name:"ASD Career Day 2014",type:"Admissions"},
-		{county:"Talladega",eventName:"ASD Career Day 2015 03/20/2015",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"3/20/15",event_name:"ASD Career Day 2015",type:"Roadshow"},
-		{county:"Talladega",eventName:"ASD Career Day 2016 02/26/2016",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/26/16",event_name:"ASD Career Day 2016",type:"SPARCC"},
-		{county:"Walker",eventName:"Curry High School 10/07/2016",location:"Walker County",num_students:300,grade:"9-12",date:"10/7/16",event_name:"Curry High School",type:"Roadshow"},
-		{county:"Winston",eventName:"Haleyville High School 04/24/2015",location:"Haleyville Center of Technology",num_students:500,grade:"9-12",date:"4/24/15",event_name:"Haleyville High School",type:"SPARCC"},
-		{county:"Winston",eventName:"Winston County Technical Center  05/08/2015",location:"Winston County Technical Center",num_students:null,grade:"",date:"5/8/15",event_name:"Winston County Technical Center ",type:"Admissions"}
+    	{county:"Blount",eventName:"Hayden High School 11/13/2015",location:"Hayden High School",num_students:75,grade:"8-12",date:"11/13/15",year:"2015",event_name:"Hayden High School",type:"Roadshow"},
+		{county:"Blount",eventName:"Hayden High School  11/04/2016",location:"Hayden High School",num_students:50,grade:"8-12",date:"11/4/16",year:"2016",event_name:"Hayden High School ",type:"Admissions"},
+		{county:"Colbert",eventName:"Covenant Christian School 09/23/2016",location:"Covenanr School Library",num_students:60,grade:"9-12",date:"9/23/16",year:"2016",event_name:"Covenant Christian School",type:"SPARCC"},
+		{county:"Cullman",eventName:"Cullman Career Center 02/06/2015",location:"Cullman Career Center",num_students:75,grade:"10-12",date:"2/6/15",year:"2015",event_name:"Cullman Career Center",type:"Roadshow"},
+		{county:"Cullman",eventName:"Westpoint  Intermediate  School 05/13/2016",location:"Westpoint Intermediate School",num_students:300,grade:"4-5",date:"5/13/16",year:"2016",event_name:"Westpoint  Intermediate  School",type:"SPARCC"},
+		{county:"Cullman",eventName:"Wallace State Community College 07/20/2016",location:"Harlan G Allen Math Building",num_students:60,grade:"Two-year institute",date:"7/20/16",year:"2016",event_name:"Wallace State Community College",type:"Admissions"},
+		{county:"Cullman",eventName:"Wallace State Community College 10/20/2016",location:"Harlan G Allen Math Building",num_students:50,grade:"Two-year institute",date:"10/20/16",year:"2016",event_name:"Wallace State Community College",type:"SPARCC"},
+		{county:"DeKalb",eventName:"Northeast Alabama Community College 10/23/2015",location:"Northeast Alabama Community College",num_students:75,grade:"Community College",date:"10/23/15",year:"2015",event_name:"Northeast Alabama Community College",type:"Admissions"},
+		{county:"DeKalb",eventName:"4TH Annual Made in DeKalb Expo 11/05/2015",location:"Northeast Alabama Agribusiness Center ",num_students:2100,grade:"9-12",date:"11/5/15",year:"2015",event_name:"4TH Annual Made in DeKalb Expo",type:"Roadshow"},
+		{county:"Fayette",eventName:"Bevill State Community College Career Fair 03/13/2015",location:"Bevill State Community College",num_students:null,grade:"11",date:"3/13/15",year:"2015",event_name:"Bevill State Community College Career Fair",type:"Roadshow"},
+		{county:"Franklin",eventName:"Russellville High School 10/28/2016",location:"Russellville High School",num_students:50,grade:"8-12",date:"10/28/16",year:"2016",event_name:"Russellville High School",type:"SPARCC"},
+		{county:"Greene",eventName:"Greene County Visit 04/29/2016",location:"Greene County High School",num_students:125,grade:"6-12",date:"4/29/16",year:"2016",event_name:"Greene County Visit",type:"Admissions"},
+		{county:"Jackson",eventName:"Career Opportunities Exploration Expo 10/27/2015",location:"Jackson County Fairgrounds",num_students:700,grade:"9",date:"10/27/15",year:"2015",event_name:"Career Opportunities Exploration Expo",type:"Admissions"},
+		{county:"Jackson",eventName:"Skyline Elementary School 02/26/2016",location:"Skyline Elementary School",num_students:38,grade:"3",date:"2/26/16",year:"2016",event_name:"Skyline Elementary School",type:"Admissions"},
+		{county:"Jackson",eventName:"STEM Outreach - Skyline High School 04/08/2016",location:"Skyline High School",num_students:30,grade:"9-12",date:"4/8/16",year:"2016",event_name:"STEM Outreach - Skyline High School",type:"Roadshow"},
+		{county:"Jackson",eventName:"Collins Intermediate School 06/15/2016",location:"Collins Intermediate School",num_students:150,grade:"K-6",date:"6/15/16",year:"2016",event_name:"Collins Intermediate School",type:"SPARCC"},
+		{county:"Madison",eventName:"Madison City Schools Visit 04/12/2016",location:"SMAP ELMER Lab",num_students:34,grade:"11-12",date:"4/12/16",year:"2016",event_name:"Madison City Schools Visit",type:"SPARCC"},
+		{county:"Madison",eventName:"Robotics Outreach 05/05/2016",location:"SMAP ELMER Lab",num_students:17,grade:"9-12",date:"5/5/16",year:"2016",event_name:"Robotics Outreach",type:"Admissions"},
+		{county:"Madison",eventName:"Blount County visit  10/05/2016",location:"SMAP ",num_students:15,grade:"Administrators",date:"10/5/16",year:"2016",event_name:"Blount County visit ",type:"SPARCC"},
+		{county:"Madison",eventName:"Mechanical and Aerospace Engineering open house 10/29/2016",location:"Olin B King Technology Hall",num_students:50,grade:"8-12",date:"10/29/16",year:"2016",event_name:"Mechanical and Aerospace Engineering open house",type:"Roadshow"},
+		{county:"Madison",eventName:"Bob Jones High School 11/17/2016",location:"SMAP UAH",num_students:40,grade:"9-12",date:"11/17/16",year:"2016",event_name:"Bob Jones High School",type:"Roadshow"},
+		{county:"Madison",eventName:"Chapman Middle School 11/08/2016",location:"SMAP UAH",num_students:25,grade:"6-7",date:"11/8/16",year:"2016",event_name:"Chapman Middle School",type:"Roadshow"},
+		{county:"Marshall",eventName:"KDS DAR School  01/29/2016",location:"Kate Duncan Smith DAR School",num_students:900,grade:"5-12",date:"1/29/16",year:"2016",event_name:"KDS DAR School ",type:"Admissions"},
+		{county:"Marshall",eventName:"DAR Middle School Engineering Club 04/13/2016",location:"Kate Duncan Smith DAR School",num_students:18,grade:"6-8",date:"4/13/16",year:"2016",event_name:"DAR Middle School Engineering Club",type:"Roadshow"},
+		{county:"Pickens",eventName:"Pickens County Career Fair 12/11/2014",location:"Pickens County Multi-Service Center ",num_students:700,grade:"9-12",date:"12/11/14",year:"2014",event_name:"Pickens County Career Fair",type:"SPARCC"},
+		{county:"Pickens",eventName:"Pickens County Career Fair 03/10/2016",location:"Pickens County Multi-Service Center ",num_students:400,grade:"9-12",date:"3/10/16",year:"2016",event_name:"Pickens County Career Fair",type:"SPARCC"},
+		{county:"Randolph",eventName:"Randolph County High School  03/04/2016",location:"Randolph County High School ",num_students:430,grade:"7-12",date:"3/4/16",year:"2016",event_name:"Randolph County High School ",type:"Roadshow"},
+		{county:"Talladega",eventName:"ASD Career Day 2014 02/05/2014",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/5/14",year:"2014",event_name:"ASD Career Day 2014",type:"Admissions"},
+		{county:"Talladega",eventName:"ASD Career Day 2015 03/20/2015",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"3/20/15",year:"2015",event_name:"ASD Career Day 2015",type:"Roadshow"},
+		{county:"Talladega",eventName:"ASD Career Day 2016 02/26/2016",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/26/16",year:"2016",event_name:"ASD Career Day 2016",type:"SPARCC"},
+		{county:"Walker",eventName:"Curry High School 10/07/2016",location:"Walker County",num_students:300,grade:"9-12",date:"10/7/16",year:"2016",event_name:"Curry High School",type:"Roadshow"},
+		{county:"Winston",eventName:"Haleyville High School 04/24/2015",location:"Haleyville Center of Technology",num_students:500,grade:"9-12",date:"4/24/15",year:"2015",event_name:"Haleyville High School",type:"SPARCC"},
+		{county:"Winston",eventName:"Winston County Technical Center  05/08/2015",location:"Winston County Technical Center",num_students:null,grade:"",date:"5/8/15",year:"2016",event_name:"Winston County Technical Center ",type:"Admissions"}
 	];
 
+//in this method below, you need to check all of the year filters to see if they're true, and if so, only show events that happened in those years. I've given you example of how I'd do that for one year, 2015, below (but my code is commented out). You can uncomment my code out to see how it works. You need to check these for every year though.
+
+//that's essentially it - you need to repeat the same process (adding filters, checking the boolean, checking if that filter is selected here) for the "type" filters
+
+//let me know if you have any questions!
+
         var filteredData = dataset.filter(function(item) {
-        		return item.county == feature.properties.name;
+        	// if(bool2015) {
+        		// if(item.year == "2015") {
+        			return item.county == feature.properties.name;
+        		// }
+        	// }
         });
 
         if(filteredData.length == 0) {
         	showNoData();
         } else {
+
+        	totalCount = 0;
 
         	hideNoData();
         	document.getElementById('my-legend').style.display = 'block';
@@ -191,14 +225,19 @@ function showPie(feature) {
 	        		map[item.type] = 0
 	        	}
 	        	map[item.type]++;
+	        	totalCount++;
 	        });
 
-	        var d3Ready = Object.keys(map).map(function(item) {
+	        d3Ready = Object.keys(map).map(function(item) {
 	        	return {
 	        		label: item,
 	        		count: map[item],
 	        	}
 	        });
+
+	        d3Ready.totalCount = totalCount;
+
+	        console.log(d3Ready);
 
 	       	var width = 200;
 	        var height = 200;
@@ -305,7 +344,8 @@ function showPie(feature) {
 	function writeName(feature) {
 		var countyname = feature.properties.name;
 		document.getElementById('county-name').innerHTML = feature.properties.name + " County";
-		document.getElementById('num-events').innerHTML = feature.properties.num + " events total"
+	document.getElementById('num-events').innerHTML = d3Ready.totalCount + " events total";
+		// document.getElementById('num-events').innerHTML = feature.properties.num + " events total";
 
 	}
 
@@ -325,9 +365,9 @@ function showPie(feature) {
 	function onEachFeature(feature, layer) {
 		    layer.on({
 		        mouseover: function(e) {
+		        	showPie(feature);
 		        	highlightFeature(e);
 		        	writeName(feature);
-		        	showPie(feature);
 		        },
 		        mouseout: function (e) {
 		        	hideNoData();
@@ -339,9 +379,9 @@ function showPie(feature) {
 	}
 
 		var alCount = 	L.geoJson(alCounties, 
-						{style: function(feature) {
-							var color = getColor(feature);
-						return {
+				{style: function(feature) {
+					var color = getColor(feature);
+					return {
 							fillColor: color,
 					        weight: 2,
 					        opacity: 1,
@@ -353,13 +393,13 @@ function showPie(feature) {
 					onEachFeature: onEachFeature
 				})
 				alCount.addTo(map);
-		})
 
 	function getColor(feature) {
 		// var rand = Math.floor((Math.random() * 10));
 		// var colors = ["#0278C8", "#0A82CF", "#2B8FD3", "#449BD6", "#5FA8DB", "#78B4DF", "#90C0E3", "#A9CDE6", "#C1DAEB", "#D9E5ED"];
 		var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"]; 
 		return colors[feature.properties.num];
+		// return colors[totalCount];
 	}
 
 	function getColor2(num) {
