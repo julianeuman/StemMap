@@ -15,14 +15,14 @@
   <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
   <script>
 // Initialize Firebase
-  	var config = {
-	    apiKey: "AIzaSyCZk4Vjtr88SHEa0q7SptQXIOBUY4uf854",
-	    authDomain: "test-vis.firebaseapp.com",
-	    databaseURL: "https://test-vis.firebaseio.com",
-	    storageBucket: "test-vis.appspot.com",
-	    messagingSenderId: "930433700814"
-  	};
-	firebase.initializeApp(config);
+  var config = {
+    apiKey: "AIzaSyC8ndOOfFMWgaSeXpdP92qOVzfSc8GzYyw",
+    authDomain: "map-vis.firebaseapp.com",
+    databaseURL: "https://map-vis.firebaseio.com",
+    storageBucket: "map-vis.appspot.com",
+    messagingSenderId: "900245293030"
+  };
+  firebase.initializeApp(config);
 </script>
 </head>
 
@@ -111,7 +111,7 @@ var map = L.map('map').setView([32.5502, -86.2023], 7.2);
 			legend.addTo(map);
 			// L.geoJson(alCounties).addTo(map);
 
-		
+
 		function highlightFeature(e) {
 			    var layer = e.target;
 
@@ -158,7 +158,7 @@ var totalCount;
 
 function showPie(feature) {
 
-    var dataset = [
+  /*var dataset = [
 
     	{county:"Blount",eventName:"Hayden High School 11/13/2015",location:"Hayden High School",num_students:75,grade:"8-12",date:"11/13/15",year:"2015",event_name:"Hayden High School",type:"Roadshow"},
 		{county:"Blount",eventName:"Hayden High School  11/04/2016",location:"Hayden High School",num_students:50,grade:"8-12",date:"11/4/16",year:"2016",event_name:"Hayden High School ",type:"Admissions"},
@@ -194,6 +194,9 @@ function showPie(feature) {
 		{county:"Winston",eventName:"Haleyville High School 04/24/2015",location:"Haleyville Center of Technology",num_students:500,grade:"9-12",date:"4/24/15",year:"2015",event_name:"Haleyville High School",type:"SPARCC"},
 		{county:"Winston",eventName:"Winston County Technical Center  05/08/2015",location:"Winston County Technical Center",num_students:null,grade:"",date:"5/8/15",year:"2016",event_name:"Winston County Technical Center ",type:"Admissions"}
 	];
+  */
+
+
 
 //in this method below, you need to check all of the year filters to see if they're true, and if so, only show events that happened in those years. I've given you example of how I'd do that for one year, 2015, below (but my code is commented out). You can uncomment my code out to see how it works. You need to check these for every year though.
 
@@ -201,6 +204,9 @@ function showPie(feature) {
 
 //let me know if you have any questions!
 
+
+
+        /* Using the dataset
         var filteredData = dataset.filter(function(item) {
         	// if(bool2015) {
         		// if(item.year == "2015") {
@@ -208,120 +214,137 @@ function showPie(feature) {
         		// }
         	// }
         });
+        */
 
-        if(filteredData.length == 0) {
-        	showNoData();
-        } else {
+        //using firebase
+        var database = firebase.database();
+        var ref = database.ref("Events");
+        var filteredData = [];
+        var unfilteredData = [];
+        ref.once("value").then(function(snapshot){
+            //goes through each entry in the database and filters to get the entries with the selected county
+            snapshot.forEach(function(snapshot){
+              unfilteredData.push(snapshot.val());
+              if (snapshot.val().county == feature.properties.name){
+                filteredData.push(snapshot.val());
+              }
 
-        	totalCount = 0;
+            });
 
-        	hideNoData();
-        	document.getElementById('my-legend').style.display = 'block';
+            if(filteredData.length == 0) {
+            	showNoData();
+            } else {
 
-	        var map = {};
+            	totalCount = 0;
 
-	        filteredData.forEach(function(item) {
-	        	if (!map[item.type]) {
-	        		map[item.type] = 0
-	        	}
-	        	map[item.type]++;
-	        	totalCount++;
-	        });
+            	hideNoData();
+            	document.getElementById('my-legend').style.display = 'block';
 
-	        d3Ready = Object.keys(map).map(function(item) {
-	        	return {
-	        		label: item,
-	        		count: map[item],
-	        	}
-	        });
+    	        var map = {};
 
-	        d3Ready.totalCount = totalCount;
+    	        filteredData.forEach(function(item) {
+    	        	if (!map[item.type]) {
+    	        		map[item.type] = 0
+    	        	}
+    	        	map[item.type]++;
+    	        	totalCount++;
+    	        });
 
-	        console.log(d3Ready);
+    	        d3Ready = Object.keys(map).map(function(item) {
+    	        	return {
+    	        		label: item,
+    	        		count: map[item],
+    	        	}
+    	        });
 
-	       	var width = 200;
-	        var height = 200;
-	        var radius = Math.min(width, height) / 2;
+    	        d3Ready.totalCount = totalCount;
 
-	        var svg = d3.select('#svg_container')
-	          .append('svg')
-	          .attr('width', width)
-	          .attr('height', height)
-	          .append('g')
-	          .attr('transform', 'translate(' + (width / 2) +
-	            ',' + (height / 2) + ')');
+    	        console.log(d3Ready);
 
-	        var arc = d3.svg.arc()
-	          .innerRadius(0)
-	          .outerRadius(radius);
+    	       	var width = 200;
+    	        var height = 200;
+    	        var radius = Math.min(width, height) / 2;
 
-	        var nestedData = d3.nest()
-	        	.key(function(d) {return d.county; })
-	        	.rollup(function(v) { return {
-	        		SPARCC: d3.sum(v, function(d) { return d.SPARCC; }),
-	        		Admissions: d3.sum(v, function(d) { return d.Admissions; }),
-	        		Roadshow: d3.sum(v, function(d) { return d.Roadshow; })
-	        	};
-	        	})
-	        	.entries(dataset);
+    	        var svg = d3.select('#svg_container')
+    	          .append('svg')
+    	          .attr('width', width)
+    	          .attr('height', height)
+    	          .append('g')
+    	          .attr('transform', 'translate(' + (width / 2) +
+    	            ',' + (height / 2) + ')');
 
+    	        var arc = d3.svg.arc()
+    	          .innerRadius(0)
+    	          .outerRadius(radius);
 
-
-	        var pie = d3.layout.pie()
-	          .value(function(d) {return d.count; })
-	          .sort(null);
-
-	            var tooltip = d3.select("#svg_container").append("div")
-	            .attr("class", "tooltip")
-	            .style("opacity", 0);
+    	        var nestedData = d3.nest()
+    	        	.key(function(d) {return d.county; })
+    	        	.rollup(function(v) { return {
+    	        		SPARCC: d3.sum(v, function(d) { return d.SPARCC; }),
+    	        		Admissions: d3.sum(v, function(d) { return d.Admissions; }),
+    	        		Roadshow: d3.sum(v, function(d) { return d.Roadshow; })
+    	        	};
+    	        	})
+    	        	.entries(unfilteredData);
 
 
-	        var path = svg.selectAll('path')
-	          .data(pie(d3Ready))
-	          .enter()
-	          .append('path')
-	          .attr('d', arc)
-	          .attr('fill', function(d) {
-	          	if(d.data.label == "SPARCC") {
-	          		return '#F27973';
-	          	} else if (d.data.label == "Admissions") {
-	          		return '#FAED3A';
-	          	} else {
-	          		return '#8CC646';
-	          	}
-	        })
 
-	        path.append("svg:text")
-		      .attr("transform", function(d) { //set the label's origin to the center of the arc
-		        //we have to make sure to set these before calling arc.centroid
-		        d.outerRadius = radius + 50; // Set Outer Coordinate
-		        d.innerRadius = radius + 45; // Set Inner Coordinate
-		        return "translate(" + arc.centroid(d) + ")";
-		      })
-		      .attr("text-anchor", "middle") //center the text on it's origin
-		      .style("fill", "Purple")
-		      .style("font", "bold 12px Arial")
-		      .text(function(d, i) { return d3Ready[i].label; });
+    	        var pie = d3.layout.pie()
+    	          .value(function(d) {return d.count; })
+    	          .sort(null);
 
-	        path.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
-		      .attr("dy", ".35em")
-		      .attr("text-anchor", "middle")
-		      //.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")"; })
-		      .attr("transform", function(d) { //set the label's origin to the center of the arc
-		        //we have to make sure to set these before calling arc.centroid
-		        d.outerRadius = radius; // Set Outer Coordinate
-		        d.innerRadius = radius/2; // Set Inner Coordinate
-		        return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")";
-		      })
-		      .style("fill", "black")
-		      .style("font", "bold 12px Arial")
-		      .text(function(d) { return d.data.count; });
+    	            var tooltip = d3.select("#svg_container").append("div")
+    	            .attr("class", "tooltip")
+    	            .style("opacity", 0);
 
-			    function angle(d) {
-      				var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
-      				return a > 90 ? a - 180 : a;
-    			}
-	      }
+
+    	        var path = svg.selectAll('path')
+    	          .data(pie(d3Ready))
+    	          .enter()
+    	          .append('path')
+    	          .attr('d', arc)
+    	          .attr('fill', function(d) {
+    	          	if(d.data.label == "SPARCC") {
+    	          		return '#F27973';
+    	          	} else if (d.data.label == "Admissions") {
+    	          		return '#FAED3A';
+    	          	} else {
+    	          		return '#8CC646';
+    	          	}
+    	        })
+
+    	        path.append("svg:text")
+    		      .attr("transform", function(d) { //set the label's origin to the center of the arc
+    		        //we have to make sure to set these before calling arc.centroid
+    		        d.outerRadius = radius + 50; // Set Outer Coordinate
+    		        d.innerRadius = radius + 45; // Set Inner Coordinate
+    		        return "translate(" + arc.centroid(d) + ")";
+    		      })
+    		      .attr("text-anchor", "middle") //center the text on it's origin
+    		      .style("fill", "Purple")
+    		      .style("font", "bold 12px Arial")
+    		      .text(function(d, i) { return d3Ready[i].label; });
+
+    	        path.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
+    		      .attr("dy", ".35em")
+    		      .attr("text-anchor", "middle")
+    		      //.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")"; })
+    		      .attr("transform", function(d) { //set the label's origin to the center of the arc
+    		        //we have to make sure to set these before calling arc.centroid
+    		        d.outerRadius = radius; // Set Outer Coordinate
+    		        d.innerRadius = radius/2; // Set Inner Coordinate
+    		        return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")";
+    		      })
+    		      .style("fill", "black")
+    		      .style("font", "bold 12px Arial")
+    		      .text(function(d) { return d.data.count; });
+
+    			    function angle(d) {
+          				var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
+          				return a > 90 ? a - 180 : a;
+        			}
+    	      }
+          });
     }
 
     function hidePie(feature) {
@@ -344,7 +367,7 @@ function showPie(feature) {
 	function writeName(feature) {
 		var countyname = feature.properties.name;
 		document.getElementById('county-name').innerHTML = feature.properties.name + " County";
-	document.getElementById('num-events').innerHTML = d3Ready.totalCount + " events total";
+	  document.getElementById('num-events').innerHTML = d3Ready.totalCount + " events total";
 		// document.getElementById('num-events').innerHTML = feature.properties.num + " events total";
 
 	}
@@ -378,7 +401,7 @@ function showPie(feature) {
 		    });
 	}
 
-		var alCount = 	L.geoJson(alCounties, 
+		var alCount = 	L.geoJson(alCounties,
 				{style: function(feature) {
 					var color = getColor(feature);
 					return {
@@ -397,13 +420,13 @@ function showPie(feature) {
 	function getColor(feature) {
 		// var rand = Math.floor((Math.random() * 10));
 		// var colors = ["#0278C8", "#0A82CF", "#2B8FD3", "#449BD6", "#5FA8DB", "#78B4DF", "#90C0E3", "#A9CDE6", "#C1DAEB", "#D9E5ED"];
-		var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"]; 
+		var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
 		return colors[feature.properties.num];
 		// return colors[totalCount];
 	}
 
 	function getColor2(num) {
-		var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"]; 
+		var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
 		return colors[num];
 	}
 
