@@ -27,22 +27,25 @@
 </head>
 
 <html>
-<div id = "header" style = "width: 100%; height: 9%; background-color: #0278C8; margin-bottom: 1%">
+<div id = "header" style = "width: 100%; height: 7%; background-color: #0278C8; margin-bottom: 1%">
     <span id="title"> UAH STEM Map</span> 
-    <span id="toggleAbout" >About This Map</span>
+    <button id = "toggleAbout">About This Map</button>
+    <!-- <span id="toggleAbout" >About This Map</span> -->
 </div>
 <div id = "sidebar" style = "background-color: #EEEEEE; height: 88%; width: 32%; float: left; margin-left: 1%">
     <div id = "county-name">Hover over a county to learn more</div>
     <div id = "num-events"></div>
     <div id = "no-data" style = "display: none">No data available for this county</div>
     <div id = "about" style = "display: none">
-        This visualization is sponsored by the University of Alabama Huntsville under the direction of Dr. Dawn Sabados. The STEM events detailed are educational events hosted by UAH for the grade school children in certain areas of Alabama. These events are typically held at schools, libraries, or big event auditoriums and are logged in a database.The types of events included on the map include SPARCC, Roadshow, and Admissions as shown below: 
+        This visualization is sponsored by the University of Alabama Huntsville under the direction of Dr. Dawn Sabados. The STEM events detailed are educational events hosted by UAH for the grade school children in certain areas of Alabama. These events are typically held at schools, libraries, or big event auditoriums and are logged in a database.The types of events included on the map include SPARCC, Roadshow, and Admissions as shown below:
+        <div id = "about-legend" style = "margin-top: 30px;">
         <div class='legend-scale'>
           <ul class='legend-labels'>
-            <li><span style='background:#F27973; margin-left: 10px;'></span>SPARCC</li>
-            <li><span style='background:#FAED3A; margin-left: 10px;'></span>Admissions</li>
-            <li><span style='background:#8CC646; margin-left: 10px;'></span>Roadshow</li>
+            <li><span style='background:#F27973;'></span><strong>SPARCC Events</strong><br> Lorem ipsum a;ldkfjad;lfkjad f;aldjad;lfkj ad;flkajd f;alkdfj</li><br><br>
+            <li><span style='background:#FAED3A;'></span><strong>Admissions Events</strong><br> Lorem ipsum a;ldkfj ad;lfkjadf;aldjad;l fkjad;flkajdf;alkdfj</li><br><br>
+            <li><span style='background:#8CC646;'></span><strong>Roadshow Events</strong><br> Lorem ipsum a;ldkfj ad;lfkjadf;a ldjad;lfk jad;flkajdf;alkdfj</li><br><br>
           </ul>
+        </div>
         </div>
     </div>  
     <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 40px;"></div>
@@ -58,7 +61,7 @@
     </div>
 
 <div id="map" style = "float: right"></div>
-<form id='years'>
+<!-- <form id='years'>
   <div><input type='checkbox' name='filters' value='2013' onclick='filter2013();' checked>2013</div>
   <div><input type='checkbox' name='filters' value='2014' onclick='filter2014();' checked>2014</div>
   <div><input type='checkbox' name='filters' value='2015' onclick='filter2015();' checked>2015</div>
@@ -68,7 +71,7 @@
   <div><input type='checkbox' name='filters' value='Admissions' onclick='filterAdmissions();' checked>Admissions</div>
   <div><input type='checkbox' name='filters' value='Roadshow' onclick='filterRoadshow();' checked>Roadshow</div>
   <div><input type='checkbox' name='filters' value='SPARCC' onclick='filterSPARCC();' checked>SPARCC</div>
-</form>
+</form> -->
 <script src="ui/external/jquery/jquery.js"></script>
 <script src="ui/jquery-ui.js"></script>
 <script src="leaflet/leaflet.js"></script>
@@ -87,7 +90,71 @@ var boolAdmissions = true;
 var boolRoadshow = true;
 var boolSPARCC = true;
 
-var filters = document.getElementById('years').filters;
+
+
+var map = L.map('map').setView([32.5502, -86.2023], 7.2);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                maxZoom: 18,
+                id: 'emilysermons.2o2npk5o',
+                accessToken: 'pk.eyJ1IjoiZW1pbHlzZXJtb25zIiwiYSI6ImNpeWM1dmVyejAwNGEzMnBlbmoxcTNsNnUifQ.Vn7bR2xDp1aR7k9f7zqvAg'
+            }).addTo(map);
+
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+
+            var legend = L.control({position: 'bottomright'});
+
+            legend.onAdd = function (map) {
+
+            var div = L.DomUtil.create('div', 'info legend'),
+                grades = [90000, 1000000, 2000000, 3000000, 4000000, 5000000, 6000000],
+                labels = [];
+
+                // loop through our density intervals and generate a label with a colored square for each interval
+            div.innerHTML = 
+
+
+'<p class = "filter-title""> Sort by year:</p>' +
+'<form id="years">'+
+  '<div><input type="checkbox" name="filters" value="2013" onclick="filter2013();" checked>2013</div>' +
+  '<div><input type="checkbox" name="filters" value="2014" onclick="filter2014();" checked>2014</div>'+
+  '<div><input type="checkbox" name="filters" value="2015" onclick="filter2015();" checked>2015</div>'+
+ '<div><input type="checkbox" name="filters" value="2016" onclick="filter2016();" checked>2016</div>'+
+  '<div><input type="checkbox" name="filters" value="2017" onclick="filter2017();" checked>2017</div>'+'</form>' +
+
+'<p class = "filter-title""> Sort by year:</p>' +
+  '<form id="events">'+
+  '<div><input type="checkbox" name="filters" value="Admissions" onclick="filterAdmissions();" checked>Admissions</div>'+
+  '<div><input type="checkbox" name="filters" value="Roadshow" onclick="filterRoadshow();" checked>Roadshow</div>'+
+  '<div><input type="checkbox" name="filters" value="SPARCC" onclick="filterSPARCC();" checked>SPARCC</div>'+ '</form>' +
+
+
+            '<p class = "filter-title""> Number of Events:</p>' +
+                                '<i style="background:'+getColor2(0) + '"></i> ' + 
+                                '<i style=" background:'+getColor2(1) + '"></i> ' +
+                                '<i style=" background:'+getColor2(2) + '"></i> ' + 
+                                '<i style="background:'+getColor2(3) + '"></i> ' + 
+                                '<i style="background:'+getColor2(4) + '"></i> ' + 
+                                '<i style="background:'+getColor2(5) + '"></i> ' + 
+                                '<i style="background:'+getColor2(6) + '"></i> ' + 
+                                '<i style="background:'+getColor2(7) + '"></i> ' + 
+                                '<i style="background:'+getColor2(8) + '"></i> ' + 
+                                '<i style="margin-bottom: 5px; background:'+getColor2(9) + '"></i> '+ '<br>' +
+                                '<div id = "numbers" style = "display: inline-block; width: 100%;">' +
+                                '<p style = "float: left; margin-bottom: 0px;">&nbsp1</p>' +
+                                '<p style = "float: right; margin-bottom: 0px;">10+</p>' +
+                                '</div>';
+                return div;
+            };
+
+            legend.addTo(map);
+            // L.geoJson(alCounties).addTo(map);
+
+        var filters = document.getElementById('years').filters;
 
 function filter2013() {
     if(filters[0].checked) {
@@ -152,48 +219,8 @@ function filterSPARCC() {
         boolSPARCC = false;
     }
 };
-
-var map = L.map('map').setView([32.5502, -86.2023], 7.2);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-                maxZoom: 18,
-                id: 'emilysermons.2o2npk5o',
-                accessToken: 'pk.eyJ1IjoiZW1pbHlzZXJtb25zIiwiYSI6ImNpeWM1dmVyejAwNGEzMnBlbmoxcTNsNnUifQ.Vn7bR2xDp1aR7k9f7zqvAg'
-            }).addTo(map);
-
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-
-            var legend = L.control({position: 'bottomright'});
-
-            legend.onAdd = function (map) {
-
-            var div = L.DomUtil.create('div', 'info legend'),
-                grades = [90000, 1000000, 2000000, 3000000, 4000000, 5000000, 6000000],
-                labels = [];
-
-                // loop through our density intervals and generate a label with a colored square for each interval
-            div.innerHTML = '<strong><center>Number of Events</strong></center>' + '<br>' +
-                                '<i style="background:'+getColor2(0) + '"></i> ' + '0 events' + '<br>' +
-                                '<i style="background:'+getColor2(1) + '"></i> ' + '1 event' + '<br>' +
-                                '<i style="background:'+getColor2(2) + '"></i> ' + '2 events' + '<br>' +
-                                '<i style="background:'+getColor2(3) + '"></i> ' + '3 events' + '<br>' +
-                                '<i style="background:'+getColor2(4) + '"></i> ' + '4 events' + '<br>' +
-                                '<i style="background:'+getColor2(5) + '"></i> ' + '5 events' + '<br>' +
-                                '<i style="background:'+getColor2(6) + '"></i> ' + '6 events' + '<br>' +
-                                '<i style="background:'+getColor2(7) + '"></i> ' + '7 events' + '<br>' +
-                                '<i style="background:'+getColor2(8) + '"></i> ' + '8 events' + '<br>' +
-                                '<i style="background:'+getColor2(9) + '"></i> ' + '9+ events';
-                return div;
-            };
-
-            legend.addTo(map);
-            // L.geoJson(alCounties).addTo(map);
-
         
+
         function highlightFeature(e) {
                 var layer = e.target;
 

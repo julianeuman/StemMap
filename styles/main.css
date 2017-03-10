@@ -6,6 +6,13 @@ body {
   margin-left: 0;
   margin-top: 0;
 }
+strong {
+  font-weight: 900;
+}
+
+input {
+
+}
 #map { 
 
   height: 88%;
@@ -17,13 +24,15 @@ body {
 }
 
 #header {
+  padding-top: 1%;
 }
 
 #about {
   padding-right: 5%;
   padding-left: 5%;
-  padding-top: 10%;
-  text-indent: 13px;
+  padding-top: 5%;
+   font-family: 'Open Sans', sans-serif;
+  /*text-indent: 13px;*/
 }
 
 #title  {
@@ -34,6 +43,7 @@ body {
   color: #fff;
   text-align: left;
   margin-top: 2%;
+  /*margin-top: 50px;*/
 }
 
 #toggleAbout {
@@ -41,32 +51,57 @@ body {
   padding-top: 0.5%; 
   padding-right: 0.5%; 
   padding-bottom: 0.5%;
-  margin-right: 3%;
+  margin-right: 1%;
   font-family: 'Open Sans', sans-serif;
-  font-size: 20px;
-  color: #fff;
+  font-size: 16px;
+  background-color: #fff;
   text-align: center;
-  border-color: red;
-  border-radius: 2px;
+  border-radius: 5px;
+  color: #0278C8;
+  border-color: transparent;
+
   float:right;
-  margin-top: 5px;
+  /*margin-top: 1%;*/
 }
 
 #toggleAbout:hover { 
-    background-color: gray;
+    background-color: #5FA6D6;
+    color: #fff;
 }
 
 
 #years {
-    position: absolute;
+    /*position: absolute;*/
     z-index: 100000;
-    top: 350;
-    right: 26;
+    /*top: 350;*/
+    /*right: 26;*/
     background: #fff;
-    width: 100px;
-    padding:10px;
-    border: 1px solid;
-    text-align: center;
+    margin-bottom: 20px;
+    color: #0278C8;
+    margin-left: 10px;
+    font-family: 'Open Sans', sans-serif;
+    /*text-align: center;*/
+}
+
+.filter-title {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  margin-left: -20px;
+  color: #000;
+  font-weight: 800;
+}
+
+#events {
+    /*position: absolute;*/
+    z-index: 100000;
+    /*top: 350;*/
+    /*right: 26;*/
+    background: #fff;
+    font-family: 'Open Sans', sans-serif;
+    margin-bottom: 20px;
+    color: #0278C8;
+    margin-left: 10px;
+    /*text-align: center;*/
 }
 
 #header p {
@@ -138,10 +173,43 @@ body {
     font-family: 'Open Sans', sans-serif;
     }
 
+ #about-legend .legend-scale ul {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    font-family: 'Open Sans', sans-serif;
+    }
+  #about-legend .legend-scale ul li {
+    display: block;
+    float: left;
+    list-style: none;
+    margin-left: 0;
+    line-height: 18px;
+    margin-bottom: 20px;
+    font-family: 'Open Sans', sans-serif;
+    }
+  #about-legend ul.legend-labels li span {
+    display: block;
+    float: left;
+    height: 55px;
+    width: 55px;
+    margin-right: 7px;
+    margin-left: 0;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    }
+
+  #about-legend a {
+    color: #eee;
+    font-family: 'Open Sans', sans-serif;
+    }
+
+
+
+
 
 #info {
-
-  /*display: inline;*/
   float: right;
   width: 30%;
   height: 100%;
@@ -169,7 +237,10 @@ body {
     color: #0278C8;
     background-color: #fff;
     border: 1px solid #0278C8;
-    padding: 10px;
+    padding-left: 30px;
+    padding-right: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     font-family: 'Open Sans', sans-serif;
 
 }
@@ -177,7 +248,7 @@ body {
     width: 18px;
     height: 18px;
     float: left;
-    margin-right: 8px;
+    
     opacity: 0.7;
     font-family: 'Open Sans', sans-serif;
 }
