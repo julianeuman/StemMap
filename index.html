@@ -15,20 +15,20 @@
   <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
   <script>
 // Initialize Firebase
-    var config = {
-        apiKey: "AIzaSyCZk4Vjtr88SHEa0q7SptQXIOBUY4uf854",
-        authDomain: "test-vis.firebaseapp.com",
-        databaseURL: "https://test-vis.firebaseio.com",
-        storageBucket: "test-vis.appspot.com",
-        messagingSenderId: "930433700814"
-    };
-    firebase.initializeApp(config);
+  var config = {
+    apiKey: "AIzaSyC8ndOOfFMWgaSeXpdP92qOVzfSc8GzYyw",
+    authDomain: "map-vis.firebaseapp.com",
+    databaseURL: "https://map-vis.firebaseio.com",
+    storageBucket: "map-vis.appspot.com",
+    messagingSenderId: "900245293030"
+  };
+  firebase.initializeApp(config);
 </script>
 </head>
 
 <html>
 <div id = "header" style = "width: 100%; height: 7%; background-color: #0278C8; margin-bottom: 1%">
-    <span id="title"> UAH STEM Map</span> 
+    <span id="title"> UAH STEM Map</span>
     <button id = "toggleAbout">About This Map</button>
     <!-- <span id="toggleAbout" >About This Map</span> -->
 </div>
@@ -47,7 +47,7 @@
           </ul>
         </div>
         </div>
-    </div>  
+    </div>
     <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 40px;"></div>
     <div id = "my-legend" style = "margin-left: 85px; margin-top: 30px; display: none;">
     <div class='legend-scale'>
@@ -81,7 +81,7 @@
 
 
 var bool2013 = true;
-var bool2014 = true; 
+var bool2014 = true;
 var bool2015 = true;
 var bool2016 = true;
 var bool2017 = true;
@@ -115,7 +115,7 @@ var map = L.map('map').setView([32.5502, -86.2023], 7.2);
                 labels = [];
 
                 // loop through our density intervals and generate a label with a colored square for each interval
-            div.innerHTML = 
+            div.innerHTML =
 
 
 '<p class = "filter-title""> Sort by year:</p>' +
@@ -134,15 +134,15 @@ var map = L.map('map').setView([32.5502, -86.2023], 7.2);
 
 
             '<p class = "filter-title""> Number of Events:</p>' +
-                                '<i style="background:'+getColor2(0) + '"></i> ' + 
+                                '<i style="background:'+getColor2(0) + '"></i> ' +
                                 '<i style=" background:'+getColor2(1) + '"></i> ' +
-                                '<i style=" background:'+getColor2(2) + '"></i> ' + 
-                                '<i style="background:'+getColor2(3) + '"></i> ' + 
-                                '<i style="background:'+getColor2(4) + '"></i> ' + 
-                                '<i style="background:'+getColor2(5) + '"></i> ' + 
-                                '<i style="background:'+getColor2(6) + '"></i> ' + 
-                                '<i style="background:'+getColor2(7) + '"></i> ' + 
-                                '<i style="background:'+getColor2(8) + '"></i> ' + 
+                                '<i style=" background:'+getColor2(2) + '"></i> ' +
+                                '<i style="background:'+getColor2(3) + '"></i> ' +
+                                '<i style="background:'+getColor2(4) + '"></i> ' +
+                                '<i style="background:'+getColor2(5) + '"></i> ' +
+                                '<i style="background:'+getColor2(6) + '"></i> ' +
+                                '<i style="background:'+getColor2(7) + '"></i> ' +
+                                '<i style="background:'+getColor2(8) + '"></i> ' +
                                 '<i style="margin-bottom: 5px; background:'+getColor2(9) + '"></i> '+ '<br>' +
                                 '<div id = "numbers" style = "display: inline-block; width: 100%;">' +
                                 '<p style = "float: left; margin-bottom: 0px;">&nbsp1</p>' +
@@ -165,8 +165,8 @@ function filter2013() {
 };
 
 function filter2014() {
-    if(filters[1].checked) { 
-        bool2014 = true; 
+    if(filters[1].checked) {
+        bool2014 = true;
     } else {
         bool2014 = false;
     }
@@ -174,7 +174,7 @@ function filter2014() {
 
 function filter2015() {
     if(filters[2].checked) {
-        bool2015 = true; 
+        bool2015 = true;
     } else {
         bool2015 = false;
     }
@@ -182,44 +182,44 @@ function filter2015() {
 
 function filter2016() {
     if(filters[3].checked) {
-        bool2016 = true; 
+        bool2016 = true;
     } else {
-        bool2016 = false; 
+        bool2016 = false;
     }
 };
 
 function filter2017() {
-    if(filters[4].checked) { 
-        bool2017 = true; 
+    if(filters[4].checked) {
+        bool2017 = true;
     } else {
         bool2017 = false;
     }
 };
 
 function filterAdmissions() {
-    if(filters[5].checked) { 
+    if(filters[5].checked) {
         boolAdmissions = true;
     } else {
-        boolAdmissions = false; 
+        boolAdmissions = false;
     }
 };
 
 function filterRoadshow() {
-    if(filters[6].checked) { 
-        boolRoadshow = true; 
+    if(filters[6].checked) {
+        boolRoadshow = true;
     } else {
-        boolRoadshow = false; 
+        boolRoadshow = false;
     }
 };
 
 function filterSPARCC() {
-    if(filters[7].checked) { 
+    if(filters[7].checked) {
         boolSPARCC = true;
     } else {
         boolSPARCC = false;
     }
 };
-        
+
 
         function highlightFeature(e) {
                 var layer = e.target;
@@ -264,8 +264,24 @@ function filterSPARCC() {
         // });
 var d3Ready;
 var totalCount;
+var dataset = [];
+getDataSet();
+//calls firebase once on startup and collects the data at the point in time and puts in in the variable dataset
+function getDataSet() {
+  var database = firebase.database();
+  var ref = database.ref("Events");
 
+  ref.once("value").then(function(snapshot){
+        snapshot.forEach(function(snapshot){
+              dataset.push(snapshot.val());
+
+        });
+
+    });
+
+}
 function showPie(feature) {
+        /*
 
     var dataset = [
 
@@ -304,13 +320,21 @@ function showPie(feature) {
         {county:"Winston",eventName:"Winston County Technical Center  05/08/2015",location:"Winston County Technical Center",num_students:null,grade:"",date:"5/8/15",year:"2016",event_name:"Winston County Technical Center ",type:"Admissions"}
     ];
 
+
+
+      */
+      console.log(dataset)
+
         var filteredData = dataset.filter(function(item) {
-            if(((bool2013 & item.year == "2013") || (bool2014 & item.year == "2014") 
-                || (bool2015 & item.year == "2015") || (bool2016 & item.year == "2016") || (bool2017 & item.year == "2017")) & 
+            if(((bool2013 & item.year == "2013") || (bool2014 & item.year == "2014")
+                || (bool2015 & item.year == "2015") || (bool2016 & item.year == "2016") || (bool2017 & item.year == "2017")) &
                 ((boolAdmissions & item.type == "Admissions") || (boolRoadshow & item.type == "Roadshow") || (boolSPARCC & item.type == "SPARCC"))) {
-                    return item.county == feature.properties.name; 
+                    return item.county == feature.properties.name;
             }
         });
+
+
+
 
         if(filteredData.length == 0) {
             showNoData();
@@ -340,7 +364,7 @@ function showPie(feature) {
 
             d3Ready.totalCount = totalCount;
 
-            console.log(d3Ready);
+
 
             var width = 200;
             var height = 200;
@@ -425,7 +449,9 @@ function showPie(feature) {
                     return a > 90 ? a - 180 : a;
                 }
           }
+
     }
+
 
     function hidePie(feature) {
         $('#svg_container').empty();
@@ -447,6 +473,7 @@ function showPie(feature) {
     function writeName(feature) {
         var countyname = feature.properties.name;
         document.getElementById('county-name').innerHTML = feature.properties.name + " County";
+        //console.log(d3Ready)
     document.getElementById('num-events').innerHTML = d3Ready.totalCount + " events total";
         // document.getElementById('num-events').innerHTML = feature.properties.num + " events total";
 
@@ -481,7 +508,7 @@ function showPie(feature) {
             });
     }
 
-        var alCount =   L.geoJson(alCounties, 
+        var alCount =   L.geoJson(alCounties,
                 {style: function(feature) {
                     var color = getColor(feature);
                     return {
@@ -500,24 +527,25 @@ function showPie(feature) {
     function getColor(feature) {
         // var rand = Math.floor((Math.random() * 10));
         // var colors = ["#0278C8", "#0A82CF", "#2B8FD3", "#449BD6", "#5FA8DB", "#78B4DF", "#90C0E3", "#A9CDE6", "#C1DAEB", "#D9E5ED"];
-        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"]; 
+        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
         return colors[feature.properties.num];
         // return colors[totalCount];
     }
 
     function getColor2(num) {
-        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"]; 
+        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
         return colors[num];
     }
     $( "#toggleAbout" ).mouseover(function() {
       document.getElementById('about').style.display = 'block';
       document.getElementById('county-name').innerHTML = "About This Map";
-      
+
     });
     $( "#toggleAbout" ).mouseout(function() {
       document.getElementById('about').style.display = 'none';
       document.getElementById('county-name').innerHTML = "Hover over a county to learn more";
     });
+
 
     </script>
 </body>
