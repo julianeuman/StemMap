@@ -154,10 +154,11 @@ var map = L.map('map').setView([32.5502, -86.2023], 7.2);
             legend.addTo(map);
             // L.geoJson(alCounties).addTo(map);
 
-        var filters = document.getElementById('years').filters;
+        var Yearfilters = document.getElementById('years').filters;
+        var Typefilters = document.getElementById('events').filters;
 
 function filter2013() {
-    if(filters[0].checked) {
+    if(Yearfilters[0].checked) {
         bool2013 = true;
     } else {
         bool2013 = false;
@@ -165,7 +166,7 @@ function filter2013() {
 };
 
 function filter2014() {
-    if(filters[1].checked) {
+    if(Yearfilters[1].checked) {
         bool2014 = true;
     } else {
         bool2014 = false;
@@ -173,7 +174,7 @@ function filter2014() {
 };
 
 function filter2015() {
-    if(filters[2].checked) {
+    if(Yearfilters[2].checked) {
         bool2015 = true;
     } else {
         bool2015 = false;
@@ -181,7 +182,7 @@ function filter2015() {
 };
 
 function filter2016() {
-    if(filters[3].checked) {
+    if(Yearfilters[3].checked) {
         bool2016 = true;
     } else {
         bool2016 = false;
@@ -189,7 +190,7 @@ function filter2016() {
 };
 
 function filter2017() {
-    if(filters[4].checked) {
+    if(Yearfilters[4].checked) {
         bool2017 = true;
     } else {
         bool2017 = false;
@@ -197,7 +198,7 @@ function filter2017() {
 };
 
 function filterAdmissions() {
-    if(filters[5].checked) {
+    if(Typefilters[0].checked) {
         boolAdmissions = true;
     } else {
         boolAdmissions = false;
@@ -205,7 +206,7 @@ function filterAdmissions() {
 };
 
 function filterRoadshow() {
-    if(filters[6].checked) {
+    if(Typefilters[1].checked) {
         boolRoadshow = true;
     } else {
         boolRoadshow = false;
@@ -213,7 +214,7 @@ function filterRoadshow() {
 };
 
 function filterSPARCC() {
-    if(filters[7].checked) {
+    if(Typefilters[2].checked) {
         boolSPARCC = true;
     } else {
         boolSPARCC = false;
@@ -323,7 +324,6 @@ function showPie(feature) {
 
 
       */
-      console.log(dataset)
 
         var filteredData = dataset.filter(function(item) {
             if(((bool2013 & item.year == "2013") || (bool2014 & item.year == "2014")
@@ -332,6 +332,7 @@ function showPie(feature) {
                     return item.county == feature.properties.name;
             }
         });
+        console.log(filteredData)
 
 
 
@@ -354,7 +355,7 @@ function showPie(feature) {
                 map[item.type]++;
                 totalCount++;
             });
-
+            d3Ready = []
             d3Ready = Object.keys(map).map(function(item) {
                 return {
                     label: item,
