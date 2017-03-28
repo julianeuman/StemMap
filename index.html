@@ -257,12 +257,7 @@ function filterSPARCC() {
         }
 
 
-        // var myDB = firebase.database().ref("Blount").orderByChild("numStudents").equalTo(50);
 
-        // myDB.on('value', snapshot => {
-  //            console.log(snapshot.val());
-  //            console.log(snapshot.child().val());
-        // });
 var d3Ready;
 var totalCount;
 var dataset = [];
@@ -271,64 +266,27 @@ getDataSet();
 function getDataSet() {
   var database = firebase.database();
   var ref = database.ref("Events");
-
+  i = 0
   ref.once("value").then(function(snapshot){
         snapshot.forEach(function(snapshot){
-              dataset.push(snapshot.val());
-
+              //dataset.push(snapshot.val());
+              dataset[i] = snapshot.val()
+              i = i + 1
         });
 
+
     });
+    console.log(dataset)
 
 }
 function showPie(feature) {
-        /*
 
-    var dataset = [
-
-        {county:"Blount",eventName:"Hayden High School 11/13/2015",location:"Hayden High School",num_students:75,grade:"8-12",date:"11/13/15",year:"2015",event_name:"Hayden High School",type:"Roadshow"},
-        {county:"Blount",eventName:"Hayden High School  11/04/2016",location:"Hayden High School",num_students:50,grade:"8-12",date:"11/4/16",year:"2016",event_name:"Hayden High School ",type:"Admissions"},
-        {county:"Colbert",eventName:"Covenant Christian School 09/23/2016",location:"Covenanr School Library",num_students:60,grade:"9-12",date:"9/23/16",year:"2016",event_name:"Covenant Christian School",type:"SPARCC"},
-        {county:"Cullman",eventName:"Cullman Career Center 02/06/2015",location:"Cullman Career Center",num_students:75,grade:"10-12",date:"2/6/15",year:"2015",event_name:"Cullman Career Center",type:"Roadshow"},
-        {county:"Cullman",eventName:"Westpoint  Intermediate  School 05/13/2016",location:"Westpoint Intermediate School",num_students:300,grade:"4-5",date:"5/13/16",year:"2016",event_name:"Westpoint  Intermediate  School",type:"SPARCC"},
-        {county:"Cullman",eventName:"Wallace State Community College 07/20/2016",location:"Harlan G Allen Math Building",num_students:60,grade:"Two-year institute",date:"7/20/16",year:"2016",event_name:"Wallace State Community College",type:"Admissions"},
-        {county:"Cullman",eventName:"Wallace State Community College 10/20/2016",location:"Harlan G Allen Math Building",num_students:50,grade:"Two-year institute",date:"10/20/16",year:"2016",event_name:"Wallace State Community College",type:"SPARCC"},
-        {county:"DeKalb",eventName:"Northeast Alabama Community College 10/23/2015",location:"Northeast Alabama Community College",num_students:75,grade:"Community College",date:"10/23/15",year:"2015",event_name:"Northeast Alabama Community College",type:"Admissions"},
-        {county:"DeKalb",eventName:"4TH Annual Made in DeKalb Expo 11/05/2015",location:"Northeast Alabama Agribusiness Center ",num_students:2100,grade:"9-12",date:"11/5/15",year:"2015",event_name:"4TH Annual Made in DeKalb Expo",type:"Roadshow"},
-        {county:"Fayette",eventName:"Bevill State Community College Career Fair 03/13/2015",location:"Bevill State Community College",num_students:null,grade:"11",date:"3/13/15",year:"2015",event_name:"Bevill State Community College Career Fair",type:"Roadshow"},
-        {county:"Franklin",eventName:"Russellville High School 10/28/2016",location:"Russellville High School",num_students:50,grade:"8-12",date:"10/28/16",year:"2016",event_name:"Russellville High School",type:"SPARCC"},
-        {county:"Greene",eventName:"Greene County Visit 04/29/2016",location:"Greene County High School",num_students:125,grade:"6-12",date:"4/29/16",year:"2016",event_name:"Greene County Visit",type:"Admissions"},
-        {county:"Jackson",eventName:"Career Opportunities Exploration Expo 10/27/2015",location:"Jackson County Fairgrounds",num_students:700,grade:"9",date:"10/27/15",year:"2015",event_name:"Career Opportunities Exploration Expo",type:"Admissions"},
-        {county:"Jackson",eventName:"Skyline Elementary School 02/26/2016",location:"Skyline Elementary School",num_students:38,grade:"3",date:"2/26/16",year:"2016",event_name:"Skyline Elementary School",type:"Admissions"},
-        {county:"Jackson",eventName:"STEM Outreach - Skyline High School 04/08/2016",location:"Skyline High School",num_students:30,grade:"9-12",date:"4/8/16",year:"2016",event_name:"STEM Outreach - Skyline High School",type:"Roadshow"},
-        {county:"Jackson",eventName:"Collins Intermediate School 06/15/2016",location:"Collins Intermediate School",num_students:150,grade:"K-6",date:"6/15/16",year:"2016",event_name:"Collins Intermediate School",type:"SPARCC"},
-        {county:"Madison",eventName:"Madison City Schools Visit 04/12/2016",location:"SMAP ELMER Lab",num_students:34,grade:"11-12",date:"4/12/16",year:"2016",event_name:"Madison City Schools Visit",type:"SPARCC"},
-        {county:"Madison",eventName:"Robotics Outreach 05/05/2016",location:"SMAP ELMER Lab",num_students:17,grade:"9-12",date:"5/5/16",year:"2016",event_name:"Robotics Outreach",type:"Admissions"},
-        {county:"Madison",eventName:"Blount County visit  10/05/2016",location:"SMAP ",num_students:15,grade:"Administrators",date:"10/5/16",year:"2016",event_name:"Blount County visit ",type:"SPARCC"},
-        {county:"Madison",eventName:"Mechanical and Aerospace Engineering open house 10/29/2016",location:"Olin B King Technology Hall",num_students:50,grade:"8-12",date:"10/29/16",year:"2016",event_name:"Mechanical and Aerospace Engineering open house",type:"Roadshow"},
-        {county:"Madison",eventName:"Bob Jones High School 11/17/2016",location:"SMAP UAH",num_students:40,grade:"9-12",date:"11/17/16",year:"2016",event_name:"Bob Jones High School",type:"Roadshow"},
-        {county:"Madison",eventName:"Chapman Middle School 11/08/2016",location:"SMAP UAH",num_students:25,grade:"6-7",date:"11/8/16",year:"2016",event_name:"Chapman Middle School",type:"Roadshow"},
-        {county:"Marshall",eventName:"KDS DAR School  01/29/2016",location:"Kate Duncan Smith DAR School",num_students:900,grade:"5-12",date:"1/29/16",year:"2016",event_name:"KDS DAR School ",type:"Admissions"},
-        {county:"Marshall",eventName:"DAR Middle School Engineering Club 04/13/2016",location:"Kate Duncan Smith DAR School",num_students:18,grade:"6-8",date:"4/13/16",year:"2016",event_name:"DAR Middle School Engineering Club",type:"Roadshow"},
-        {county:"Pickens",eventName:"Pickens County Career Fair 12/11/2014",location:"Pickens County Multi-Service Center ",num_students:700,grade:"9-12",date:"12/11/14",year:"2014",event_name:"Pickens County Career Fair",type:"SPARCC"},
-        {county:"Pickens",eventName:"Pickens County Career Fair 03/10/2016",location:"Pickens County Multi-Service Center ",num_students:400,grade:"9-12",date:"3/10/16",year:"2016",event_name:"Pickens County Career Fair",type:"SPARCC"},
-        {county:"Randolph",eventName:"Randolph County High School  03/04/2016",location:"Randolph County High School ",num_students:430,grade:"7-12",date:"3/4/16",year:"2016",event_name:"Randolph County High School ",type:"Roadshow"},
-        {county:"Talladega",eventName:"ASD Career Day 2014 02/05/2014",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/5/14",year:"2014",event_name:"ASD Career Day 2014",type:"Admissions"},
-        {county:"Talladega",eventName:"ASD Career Day 2015 03/20/2015",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"3/20/15",year:"2015",event_name:"ASD Career Day 2015",type:"Roadshow"},
-        {county:"Talladega",eventName:"ASD Career Day 2016 02/26/2016",location:"Alabama School For the Deaf",num_students:150,grade:"6-12",date:"2/26/16",year:"2016",event_name:"ASD Career Day 2016",type:"SPARCC"},
-        {county:"Walker",eventName:"Curry High School 10/07/2016",location:"Walker County",num_students:300,grade:"9-12",date:"10/7/16",year:"2016",event_name:"Curry High School",type:"Roadshow"},
-        {county:"Winston",eventName:"Haleyville High School 04/24/2015",location:"Haleyville Center of Technology",num_students:500,grade:"9-12",date:"4/24/15",year:"2015",event_name:"Haleyville High School",type:"SPARCC"},
-        {county:"Winston",eventName:"Winston County Technical Center  05/08/2015",location:"Winston County Technical Center",num_students:null,grade:"",date:"5/8/15",year:"2016",event_name:"Winston County Technical Center ",type:"Admissions"}
-    ];
-
-
-
-      */
 
         var filteredData = dataset.filter(function(item) {
             if(((bool2013 & item.year == "2013") || (bool2014 & item.year == "2014")
                 || (bool2015 & item.year == "2015") || (bool2016 & item.year == "2016") || (bool2017 & item.year == "2017")) &
                 ((boolAdmissions & item.type == "Admissions") || (boolRoadshow & item.type == "Roadshow") || (boolSPARCC & item.type == "SPARCC"))) {
+
                     return item.county == feature.properties.name;
             }
         });
