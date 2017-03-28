@@ -271,18 +271,21 @@ function getDataSet() {
         snapshot.forEach(function(snapshot){
               //dataset.push(snapshot.val());
               dataset[i] = snapshot.val()
+
+
               i = i + 1
+
         });
 
 
     });
-    console.log(dataset)
-
+    
 }
 function showPie(feature) {
 
 
         var filteredData = dataset.filter(function(item) {
+
             if(((bool2013 & item.year == "2013") || (bool2014 & item.year == "2014")
                 || (bool2015 & item.year == "2015") || (bool2016 & item.year == "2016") || (bool2017 & item.year == "2017")) &
                 ((boolAdmissions & item.type == "Admissions") || (boolRoadshow & item.type == "Roadshow") || (boolSPARCC & item.type == "SPARCC"))) {
@@ -290,7 +293,7 @@ function showPie(feature) {
                     return item.county == feature.properties.name;
             }
         });
-        console.log(filteredData)
+
 
 
 
