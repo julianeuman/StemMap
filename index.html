@@ -279,7 +279,27 @@ function getDataSet() {
 
 
     });
-    
+
+}
+var admissionsDataset = [];
+getAdmissionsDataSet();
+function getAdmissionsDataSet() {
+  var database = firebase.database();
+  var ref = database.ref("Admissions");
+  i = 0
+  ref.once("value").then(function(snapshot){
+        snapshot.forEach(function(snapshot){
+              //dataset.push(snapshot.val());
+              admissionsDataset[i] = snapshot.val()
+
+
+              i = i + 1
+
+        });
+
+
+    });
+
 }
 function showPie(feature) {
 
