@@ -286,14 +286,14 @@ getAdmissionsDataSet();
 function getAdmissionsDataSet() {
   var database = firebase.database();
   var ref = database.ref("Admissions");
-  i = 0
+  x = 0
   ref.once("value").then(function(snapshot){
         snapshot.forEach(function(snapshot){
               //dataset.push(snapshot.val());
-              admissionsDataset[i] = snapshot.val()
+              admissionsDataset[x] = snapshot.val()
+              console.log(x)
 
-
-              i = i + 1
+              x = x + 1
 
         });
 
@@ -301,6 +301,7 @@ function getAdmissionsDataSet() {
     });
 
 }
+console.log(admissionsDataset)
 function showPie(feature) {
 
 
