@@ -49,9 +49,21 @@
         </div>
     </div>
     <div id = "addEvent" style = "display: none">
-        Add TestingEvent 
+      <form id="frm1" onsubmit="submitFunction()">
+      County: <select>
+        <option value="Madison">Madison</option>
+        <option value="Pickens">Pickens</option>
+        <option value="Jackson">Jackson</option>
+        <option value="Morgan">Morgan</option>
+      </select><br><!-- County: <input type="text" id="county"><br> -->
+      Number of Students Reached: <input type="text" id = "numStudents" align="right"><br>
+      Type of Event: <input type="text" id="type" align="right" placeholder="ELMER/SPARCC"><br>
+      School: <input type="text" id="school" align="right"><br>
+      Date: <input type="text" id="date" align="right" placeholder="MM/DD/YYYY"><br><br>
+      <input type="submit" value="Submit"/>
+</form> 
     </div>
-    <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 40px;"></div>
+    <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 60px;"></div>
     <div id = "my-legend" style = "margin-left: 130px; margin-top: 30px; display: none;">
     <div class='legend-scale'>
           <ul class='legend-labels'>
@@ -59,21 +71,12 @@
             <li><span style='background:#8CC646; margin-left: 10px;'></span>ELMER</li>
           </ul>
           </div>
-</div>
+    </div>
+    <br>
+    <div id = "admissions-num" style = "display:none"></div>
     </div>
 
 <div id="map" style = "float: right"></div>
-<!-- <form id='years'>
-  <div><input type='checkbox' name='filters' value='2013' onclick='filter2013();' checked>2013</div>
-  <div><input type='checkbox' name='filters' value='2014' onclick='filter2014();' checked>2014</div>
-  <div><input type='checkbox' name='filters' value='2015' onclick='filter2015();' checked>2015</div>
-  <div><input type='checkbox' name='filters' value='2016' onclick='filter2016();' checked>2016</div>
-  <div><input type='checkbox' name='filters' value='2017' onclick='filter2017();' checked>2017</div>
-
-  <div><input type='checkbox' name='filters' value='Admissions' onclick='filterAdmissions();' checked>Admissions</div>
-  <div><input type='checkbox' name='filters' value='Roadshow' onclick='filterRoadshow();' checked>Roadshow</div>
-  <div><input type='checkbox' name='filters' value='SPARCC' onclick='filterSPARCC();' checked>SPARCC</div>
-</form> -->
 <script src="ui/external/jquery/jquery.js"></script>
 <script src="ui/jquery-ui.js"></script>
 <script src="leaflet/leaflet.js"></script>
@@ -90,6 +93,40 @@ var bool2017 = true;
 
 var boolELMER = true;
 var boolSPARCC = true;
+
+var database = firebase.database();
+  function submitFunction() {
+    var county = document.getElementById('county').value;
+    var numStudentsVal = document.getElementById('numStudents').value;
+    var eventVal = document.getElementById('type').value;
+    var schoolVal = document.getElementById('school').value;
+    var dateVal = document.getElementById('date').value;
+    // writeUserData(dateVal, schoolVal, numStudentsVal, eventVal, county);
+
+  }
+    function writeUserData(date, school, studentsTaught, type, county) {
+              // firebase.database().ref('Montgomery/event5').set({
+              //   date: date,
+              //   students: studentsTaught,
+              //   type: type,
+              //   school: school
+              // });
+        if(county == "mont") {
+              firebase.database().ref('Montgomery/' + 'event6').set({
+              date: date,
+              students: studentsTaught,
+              type: type,
+              school: school
+              });
+        } else {
+              firebase.database().ref('Pickens/' + 'event6').set({
+              date: date,
+              students: studentsTaught,
+              type: type,
+              school: school
+              });
+        }
+    }
 
 
 
@@ -283,7 +320,7 @@ function getAdmissionsDataSet() {
         snapshot.forEach(function(snapshot){
               //dataset.push(snapshot.val());
               admissionsDataset[x] = snapshot.val()
-              console.log(x)
+              // console.log(x)
 
               x = x + 1
 
@@ -293,7 +330,7 @@ function getAdmissionsDataSet() {
     });
 
 }
-console.log(admissionsDataset)
+// console.log(admissionsDataset)
 function showPie(feature) {
 
         $('#toggleAbout').css('background-color', '#FFFFFF');
@@ -314,12 +351,33 @@ function showPie(feature) {
             }
         });
 
+        var filteredAdmissions = admissionsDataset.filter(function(item) {
+            if(((bool2013 & item.year == "2013") || (bool2014 & item.year == "2014")
+              || (bool2015 & item.year == "2015") || (bool2016 & item.year == "2016") || (bool2017 & item.year == "2017"))) {
+                return item.county == feature.properties.name;
+            }
+        });
+
+        var admissionNumber = 0;
+
+
+        for(i = 0; i < filteredAdmissions.length; i++) {
+          admissionNumber += filteredAdmissions[i].numStudents;
+        }
+
+
+
+        
+
+
 
 
 
 
         if(filteredData.length == 0) {
             showNoData();
+            document.getElementById('admissions-num').innerHTML = "";
+            document.getElementById('admissions-num').style.display = 'none';
         } else {
 
             totalCount = 0;
@@ -328,6 +386,7 @@ function showPie(feature) {
             document.getElementById('my-legend').style.display = 'block';
 
             var map = {};
+
 
             filteredData.forEach(function(item) {
                 if (!map[item.type]) {
@@ -345,6 +404,14 @@ function showPie(feature) {
             });
 
             d3Ready.totalCount = totalCount;
+
+            if(admissionNumber > 0) {
+              document.getElementById('admissions-num').style.display = 'block';
+              document.getElementById('admissions-num').innerHTML = "Total number of students admitted to UAH:" + admissionNumber;
+            } else {
+              document.getElementById('admissions-num').style.display = 'block';
+              document.getElementById('admissions-num').innerHTML = "Admissions data not available";
+            }
 
 
 
@@ -495,6 +562,7 @@ function showPie(feature) {
     function eraseName(feature) {
         document.getElementById('county-name').innerHTML = "Hover over a county to learn more";
         document.getElementById('num-events').innerHTML = "";
+        document.getElementById('admissions-num').innerHTML = "";
     }
 
     function countyName(feature) {

@@ -187,6 +187,15 @@ input {
   text-align: center;
 }
 
+#admissions-num {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  color: #959595;;
+  font-weight: 600;
+  margin-top: 40px;
+  text-align: center;
+}
+
  #my-legend .legend-scale ul {
     margin: 0;
     padding: 0;
