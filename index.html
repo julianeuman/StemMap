@@ -293,7 +293,6 @@ var dataset = [];
 getDataSet();
 //calls firebase once on startup and collects the data at the point in time and puts in in the variable dataset
 function getDataSet() {
-  var database = firebase.database();
   var ref = database.ref("Events");
   i = 0
   ref.once("value").then(function(snapshot){
