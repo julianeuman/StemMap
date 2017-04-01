@@ -13,10 +13,10 @@ strong {
 input {
 
 }
-#map { 
+#map {
 
   height: 88%;
-  width: 65%; 
+  width: 65%;
   font-style: #FFFFFF;
   margin-left: 1%;
   margin-bottom: 5px;
@@ -37,7 +37,7 @@ input {
 
 #title  {
   padding-left: 1.5%;
-  padding-top: 3%; 
+  padding-top: 3%;
   font-family: 'Open Sans', sans-serif;
   font-size: 28px;
   color: #fff;
@@ -48,8 +48,55 @@ input {
 
 #toggleAbout {
   padding-left: 0.5%;
-  padding-top: 0.5%; 
-  padding-right: 0.5%; 
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+  padding-bottom: 0.5%;
+  margin-right: 1%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  background-color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  color: #0278C8;
+  border-color: transparent;
+  outline: none;
+  float:right;
+  cursor: pointer;
+}
+
+#toggleAbout:hover {
+    background-color: #5FA6D6;
+    color: #fff;
+}
+
+#toggleForm {
+  padding-left: 0.5%;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+  padding-bottom: 0.5%;
+  margin-right: 1%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  background-color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  color: #0278C8;
+  border-color: transparent;
+  outline: none;
+  float:right;
+  cursor: pointer;
+  /*margin-top: 1%;*/
+}
+
+#toggleForm:hover {
+    background-color: #5FA6D6;
+    color: #fff;
+}
+
+/*#toggleAdd {
+  padding-left: 0.5%;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
   padding-bottom: 0.5%;
   margin-right: 1%;
   font-family: 'Open Sans', sans-serif;
@@ -60,14 +107,14 @@ input {
   color: #0278C8;
   border-color: transparent;
 
-  float:right;
-  /*margin-top: 1%;*/
-}
+  float:right;*/
+/*  margin-top: 1%;*/
+/*}*/
 
-#toggleAbout:hover { 
+/*#toggleAdd:hover {
     background-color: #5FA6D6;
     color: #fff;
-}
+}*/
 
 
 #years {
@@ -106,7 +153,7 @@ input {
 
 #header p {
   padding-left: 1.5%;
-  padding-top: 1%; 
+  padding-top: 1%;
   font-family: 'Open Sans', sans-serif;
   font-size: 28px;
   color: #fff;
@@ -248,7 +295,7 @@ input {
     width: 18px;
     height: 18px;
     float: left;
-    
+
     opacity: 0.7;
     font-family: 'Open Sans', sans-serif;
 }
