@@ -56,12 +56,17 @@
         <option value="Jackson">Jackson</option>
         <option value="Morgan">Morgan</option>
       </select><br><!-- County: <input type="text" id="county"><br> -->
-      Number of Students Reached: <input type="text" id = "numStudents" align="right"><br>
-      Type of Event: <input type="text" id="type" align="right" placeholder="ELMER/SPARCC"><br>
-      School: <input type="text" id="school" align="right"><br>
-      Date: <input type="text" id="date" align="right" placeholder="MM/DD/YYYY"><br><br>
+      County: <input type="text" id = "countyInput" align="right" placeholder="Blount"><br>
+      Date: <input type="text" id="dateInput" align="right" placeholder="MM/DD/YYYY"><br><br>
+      Event Name: <input type="text" id="eventNameInput" align="right" placeholder="Sample High School MM/DD/YYYY"><br><br>
+      Grade: <input type="text" id="gradeInput" align="right" placeholder="4-5"><br><br>
+      Location: <input type="text" id="locationInput" align="right" placeholder="Sample High School"><br>
+      Number of Students Reached: <input type="text" id = "numStudentsInput" align="right"><br>
+      Type of Event: <input type="text" id="typeInput" align="right" placeholder="ELMER/SPARCC"><br>
+      Year: <input type="text" id="yearInput" align="right" placeholder = "2015"><br>
+
       <input type="submit" value="Submit"/>
-</form> 
+</form>
     </div>
     <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 60px;"></div>
     <div id = "my-legend" style = "margin-left: 130px; margin-top: 30px; display: none;">
@@ -95,38 +100,62 @@ var boolELMER = true;
 var boolSPARCC = true;
 
 var database = firebase.database();
-  function submitFunction() {
-    var county = document.getElementById('county').value;
-    var numStudentsVal = document.getElementById('numStudents').value;
-    var eventVal = document.getElementById('type').value;
-    var schoolVal = document.getElementById('school').value;
-    var dateVal = document.getElementById('date').value;
-    // writeUserData(dateVal, schoolVal, numStudentsVal, eventVal, county);
+//getAdmissionsCount();
+//var admissionsNum = 0;
+
+
+getEventCount()
+
+
+  function getEventCount() {
+    var num;
+    var database = firebase.database();
+    var ref = database.ref("Events");
+    ref.on("value", function(snapshot) {
+      number = (snapshot.numChildren())
+      gotNum(number + 1)
+
+    }, function(error) {
+      console.error(error);
+    });
 
   }
-    function writeUserData(date, school, studentsTaught, type, county) {
-              // firebase.database().ref('Montgomery/event5').set({
-              //   date: date,
-              //   students: studentsTaught,
-              //   type: type,
-              //   school: school
-              // });
-        if(county == "mont") {
-              firebase.database().ref('Montgomery/' + 'event6').set({
+var eventNum = 0
+  function gotNum(numberOfEvents) {
+    console.log("eventNum: " + numberOfEvents)
+    eventNum = numberOfEvents
+  }
+
+
+
+  function submitFunction() {
+    console.log("event Num: " + eventNum)
+    var county = document.getElementById('countyInput').value;
+    var dateVal = document.getElementById('dateInput').value;
+    var eventName = document.getElementById('eventNameInput').value;
+    var grade = document.getElementById('gradeInput').value;
+    var location = document.getElementById('locationInput').value;
+    var numStudentsVal = document.getElementById('numStudentsInput').value;
+    var eventVal = document.getElementById('typeInput').value;
+    var year = document.getElementById('yearInput').value;
+
+    writeUserData(eventNum, county, dateVal, eventName, grade, location, numStudentsVal, eventVal, year);
+
+  }
+  function writeUserData(number, county, date, nameOfEvent, grade, location, numStudents, type, year) {
+
+            firebase.database().ref('Events/' + number).set({
+              county: county,
               date: date,
-              students: studentsTaught,
+              eventName: nameOfEvent,
+              grade: grade,
+              location: location,
+              numStudents: numStudents,
               type: type,
-              school: school
-              });
-        } else {
-              firebase.database().ref('Pickens/' + 'event6').set({
-              date: date,
-              students: studentsTaught,
-              type: type,
-              school: school
-              });
-        }
-    }
+              year: year
+             });
+  }
+
 
 
 
@@ -366,7 +395,7 @@ function showPie(feature) {
 
 
 
-        
+
 
 
 
