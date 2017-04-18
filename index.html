@@ -1,4 +1,4 @@
-<head>
+pyth<head>
 <title>Alabama Counties</title>
 <link rel="stylesheet" href="leaflet/leaflet.css" />
 <link rel="stylesheet" href="styles/main.css" />
@@ -144,7 +144,7 @@
         <input type="submit" id = "admissionSubmit" value="Submit"/>
         </form>
       </div>
-      
+
       <div id = "addEvent" style = "display: none; margin: 1%; padding: 2%; text-align: center;">
       All fields are required.
       <form id="frm1" onsubmit="submitFunction()" style = "padding-left: 10%; padding-top: 5%; text-align: left;">
@@ -234,7 +234,7 @@
     </div>
     </div>
 
-    
+
     <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 60px;"></div>
     <div id = "my-legend" style = "margin-left: 130px; margin-top: 30px; display: none;">
     <div class='legend-scale'>
@@ -270,6 +270,7 @@ var database = firebase.database();
 
 
 getEventCount();
+getAdmissionsCount();
 
 function checkPW() {
   var pw = document.getElementById("pw-input").value;
@@ -316,7 +317,6 @@ var eventNum = 0;
   }
 
 
-
   function submitFunction() {
     console.log("event Num: " + eventNum)
     var county = document.getElementById('countyInput').value;
@@ -345,7 +345,7 @@ var eventNum = 0;
              });
   }
 
-  getAdmissionsCount();
+
 
     function getAdmissionsCount() {
     var num;
@@ -364,6 +364,7 @@ var admissionsNum = 0;
 
 function gotAdmissionsNum(numberOfEvents) {
     admissionsNum = numberOfEvents;
+
   }
 
 
@@ -371,7 +372,8 @@ function admissionsSubmitFunction() {
   var county = document.getElementById('adCountyInput').value;
   var year = document.getElementById('adYearInput').value;
   var numStudents = document.getElementById('adNumStudents').value;
-  writeAdUserData(admissionsNum, year, numStudents);   
+  writeAdUserData(admissionsNum, county, year, numStudents);
+
 }
 
 function writeAdUserData(number, county, year, numStudents) {
