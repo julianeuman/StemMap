@@ -32,7 +32,91 @@ input {
   padding-left: 5%;
   padding-top: 5%;
    font-family: 'Open Sans', sans-serif;
-  /*text-indent: 13px;*/
+}
+
+#eventSubmit {
+  padding-left: 0.5%;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+  padding-bottom: 0.5%;
+  margin-right: 1%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  background-color: #0278C8;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  border-color: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+#admissionSubmit {
+  padding-left: 0.5%;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+  padding-bottom: 0.5%;
+  margin-right: 1%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  background-color: #0278C8;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  border-color: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+#pwsubmit {
+  padding-left: 0.5%;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+  padding-bottom: 0.5%;
+  margin-right: 1%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  background-color: #0278C8;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  border-color: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+#eventData {
+  padding-left: 0.5%;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+  padding-bottom: 0.5%;
+  margin-right: 1%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  background-color: #0278C8;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  border-color: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+#admissionsData {
+  padding-left: 0.5%;
+  padding-top: 0.5%;
+  padding-right: 0.5%;
+  padding-bottom: 0.5%;
+  margin-right: 1%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  background-color: #0278C8;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  border-color: transparent;
+  outline: none;
+  cursor: pointer;
 }
 
 #title  {

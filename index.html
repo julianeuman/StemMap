@@ -5,8 +5,7 @@
 <link href="styles/nouislider.min.css" rel="stylesheet">
 <link href="ui/jquery-ui.css" rel="stylesheet">
 <script src="scripts/jquery.js"></script>
-<script src="d3/d3.js"></script>
-<script src="d3/d3-tip-v0.6.7.js"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
 <script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
 <link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
 <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
@@ -30,7 +29,7 @@
 <div id = "header" style = "width: 100%; height: 7%; background-color: #0278C8; margin-bottom: 1%">
     <span id="title"> UAH STEM Map</span>
     <button id = "toggleAbout" onclick = "showAbout()">About This Map</button>
-    <button id = "toggleForm" onclick = "showForm()">Add Event</button>
+    <button id = "toggleForm" onclick = "showForm()">Add Data</button>
     <!-- <span id="toggleAbout" >About This Map</span> -->
 </div>
 <div id = "sidebar" style = "background-color: #EEEEEE; height: 88%; width: 32%; float: left; margin-left: 1%">
@@ -38,19 +37,40 @@
     <div id = "num-events"></div>
     <div id = "no-data" style = "display: none">No data available for this county</div>
     <div id = "about" style = "display: none">
-        This visualization is sponsored by the University of Alabama Huntsville under the direction of Dr. Dawn Sabados. The STEM events detailed are educational events hosted by UAH for the grade school children in certain areas of Alabama. These events are typically held at schools, libraries, or big event auditoriums and are logged in a database.The types of events included on the map include SPARCC and ELMER as shown below:
+        This visualization is sponsored by UAH's STEM HELP website. The STEM Outreach map details events hosted by UAH groups for school children across Alabama to generate interest in STEM fields. These events are typically held at schools, libraries, or big event auditoriums and are then logged in a database. The groups currently included are SPARCC and ELMER. Admissions data is also included to aid in determining locations for future outreach events.
         <div id = "about-legend" style = "margin-top: 30px;">
         <div class='legend-scale'>
           <ul class='legend-labels'>
-            <li><span style='background:#F27973;'></span><strong>SPARCC Events</strong><br> Lorem ipsum a;ldkfjad;lfkjad f;aldjad;lfkj ad;flkajd f;alkdfj</li><br><br>
-            <li><span style='background:#8CC646;'></span><strong>ELMER Events</strong><br> Lorem ipsum a;ldkfj ad;lfkjadf;a ldjad;lfk jad;flkajdf;alkdfj</li><br><br>
+            <li><strong>ADMISSIONS: </strong> Publicly available admissions data is also included for counties in Alabama. This data shows how many students enrolled in UAH for the selected years.</li>
+            <li><span style='background:#F27973;'></span><strong>SPARCC: </strong>organizes STEM competitions for different grade levels. The longest running program, InSPIRESS, is a semester-long design competition that improves students' self efficacy and awareness of STEM fields. </li><br>
+            <li><span style='background:#8CC646;'></span><strong>ELMER: </strong> Events include STEM Help and the popular STEM Roadshow. Students and researchers from UAH bring UAVs, Programmable LEDs, 3D printers and other STEM demonstrations to classes, career fairs, and other events to get K-12 students excited about STEM topics.</li><br>
           </ul>
         </div>
         </div>
     </div>
-    <div id = "addEvent" style = "display: none">
-      <form id="frm1" onsubmit="submitFunction()">
-      County: <select id = "countyInput">
+
+
+        <div id = "addData" style = "display: none">
+      <div id = "password" style = "margin: 1%; padding: 2%;">
+      <br>
+      This page is password protected. To proceed entering data, please enter the password. If you do not know your password, please contact your administrator.<br><br>
+        <div class = "buttonz" style = "text-align: center;">
+        <input id = "pw-input" style = "margin-right: 10px; width: 50%;" type="password" name="password">
+        <button id = "pwsubmit" onclick = "checkPW()">Submit</button>
+        </div>
+      </div>
+      <div id = "chooseForm" style = "display: none; margin: 1%; padding: 2%;">
+      <div class = "buttonz" style = "text-align: center;">
+      What type of data would you like to enter?<br><br>
+        <button id = "eventData" style = "margin-left: 10px;" onclick = "showEventForm()">Event Data</button>
+        <button id = "admissionsData" onclick = "showAdmissionsForm()">Admissions Data</button>
+      </div>
+      <br></div>
+
+      <div id = "addAdmissions" style = "display: none; margin: 1%; padding: 2%; text-align: center;">
+      All fields are required.
+      <form id = "frm2" onsubmit = "admissionsSubmitFunction()" style = "padding-left: 10%; padding-top: 5%; text-align: left;">
+        County: <select id = "adCountyInput" required>
         <option value="Autauga">Autauga</option>
         <option value="Baldwin">Baldwin</option>
         <option value="Barbour">Barbour</option>
@@ -117,19 +137,102 @@
         <option value="Washington">Washington</option>
         <option value="Wilcox">Wilcox</option>
         <option value="Winston">Winston</option>
-      </select><br><!-- County: <input type="text" id="county"><br> -->
+      </select><br><br>
+        Year: <input type="text" required id="adYearInput" align="right" placeholder="YYYY"><br><br>
+        Number of Students Admitted <input type="text" required id="adNumStudents" align="right" placeholder="ex: 200"><br><br>
+        <input type="submit" id = "admissionSubmit" value="Submit"/>
+        </form>
+      </div>
+      
+      <div id = "addEvent" style = "display: none; margin: 1%; padding: 2%; text-align: center;">
+      All fields are required.
+      <form id="frm1" onsubmit="submitFunction()" style = "padding-left: 10%; padding-top: 5%; text-align: left;">
+      County: <select id = "countyInput" required>
+        <option value="Autauga">Autauga</option>
+        <option value="Baldwin">Baldwin</option>
+        <option value="Barbour">Barbour</option>
+        <option value="Bibb">Bibb</option>
+        <option value="Blount">Blount</option>
+        <option value="Butler">Butler</option>
+        <option value="Calhoun">Calhoun</option>
+        <option value="Chambers">Chambers</option>
+        <option value="Cherokee">Cherokee</option>
+        <option value="Chilton">Chilton</option>
+        <option value="Choctaw">Choctaw</option>
+        <option value="Clarke">Clarke</option>
+        <option value="Clay">Clay</option>
+        <option value="Cleburne">Cleburne</option>
+        <option value="Coffee">Coffee</option>
+        <option value="Colbert">Colbert</option>
+        <option value="Conecuh">Conecuh</option>
+        <option value="Coosa">Coosa</option>
+        <option value="Covington">Convington</option>
+        <option value="Crenshaw">Crenshaw</option>
+        <option value="Cullman">Cullman</option>
+        <option value="Dale">Dale</option>
+        <option value="Dallas">Dallas</option>
+        <option value="DeKalb">DeKalb</option>
+        <option value="Elmore">Elmore</option>
+        <option value="Escambia">Escambia</option>
+        <option value="Etowah">Etowah</option>
+        <option value="Fayette">Fayette</option>
+        <option value="Franklin">Franklin</option>
+        <option value="Geneva">Geneva</option>
+        <option value="Greene">Greene</option>
+        <option value="Hale">Hale</option>
+        <option value="Henry">Henry</option>
+        <option value="Houston">Houston</option>
+        <option value="Jackson">Jackson</option>
+        <option value="Jefferson">Jefferson</option>
+        <option value="Lamar">Lamar</option>
+        <option value="Lauderdale">Lauderdale</option>
+        <option value="Lawrence">Lawrence</option>
+        <option value="Lee">Lee</option>
+        <option value="Limestone">Limestone</option>
+        <option value="Lowndes">Lowndes</option>
+        <option value="Macon">Macon</option>
+        <option value="Madison">Madison</option>
+        <option value="Marengo">Marengo</option>
+        <option value="Marion">Marion</option>
+        <option value="Marshall">Marshall</option>
+        <option value="Mobile">Mobile</option>
+        <option value="Monroe">Monroe</option>
+        <option value="Montgomery">Montgomery</option>
+        <option value="Morgan">Morgan</option>
+        <option value="Perry">Perry</option>
+        <option value="Pickens">Pickens</option>
+        <option value="Pike">Pike</option>
+        <option value="Randolph">Randolph</option>
+        <option value="Russell">Russell</option>
+        <option value="St. Clair">St. Clair</option>
+        <option value="Shelby">Shelby</option>
+        <option value="Sumter">Sumter</option>
+        <option value="Talladega">Talladega</option>
+        <option value="Tallapoosa">Tallapoosa</option>
+        <option value="Tuscaloosa">Tulscaloosa</option>
+        <option value="Walker">Walker</option>
+        <option value="Washington">Washington</option>
+        <option value="Wilcox">Wilcox</option>
+        <option value="Winston">Winston</option>
+      </select><br><br><!-- County: <input type="text" id="county"><br> -->
 
-      Date: <input type="text" id="dateInput" align="right" placeholder="MM/DD/YYYY"><br><br>
-      Event Name: <input type="text" id="eventNameInput" align="right" placeholder="Sample High School MM/DD/YYYY"><br><br>
-      Grade: <input type="text" id="gradeInput" align="right" placeholder="4-5"><br><br>
-      Location: <input type="text" id="locationInput" align="right" placeholder="Sample High School"><br>
-      Number of Students Reached: <input type="text" id = "numStudentsInput" align="right"><br>
-      Type of Event: <input type="text" id="typeInput" align="right" placeholder="ELMER/SPARCC"><br>
-      Year: <input type="text" id="yearInput" align="right" placeholder = "2015"><br>
+      Date: <input type="text" required id="dateInput" align="right" placeholder="MM/DD/YYYY"><br><br>
+      Event Name: <input type="text" required id="eventNameInput" align="right" placeholder="Sample High School MM/DD/YYYY"><br><br>
+      Grade: <input type="text" required id="gradeInput" align="right" placeholder="4-5"><br><br>
+      Location: <input type="text" required id="locationInput" align="right" placeholder="Sample High School"><br><br>
+      Number of Students Reached: <input type="text" required id = "numStudentsInput" align="right"><br><br>
+      Type of Event: <select id = "typeInput" required>
+        <option value="SPARCC">SPARCC</option>
+        <option value="ELMER">ELMER</option>
+      </select><br><br>
+      Year: <input type="text" required id="yearInput" align="right" placeholder = "2015"><br><br>
 
-      <input type="submit" value="Submit"/>
+      <input type="submit" id = "eventSubmit" value="Submit"/>
 </form>
     </div>
+    </div>
+
+    
     <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 60px;"></div>
     <div id = "my-legend" style = "margin-left: 130px; margin-top: 30px; display: none;">
     <div class='legend-scale'>
@@ -162,11 +265,19 @@ var boolELMER = true;
 var boolSPARCC = true;
 
 var database = firebase.database();
-//getAdmissionsCount();
-//var admissionsNum = 0;
 
 
-getEventCount()
+getEventCount();
+
+function checkPW() {
+  var pw = document.getElementById("pw-input").value;
+  if(pw !== "letmein") {
+    alert("Wrong Password. Try again");
+    document.getElementById("pw-input").value = "";
+  } else {
+    showChoose();
+  }
+}
 
 
   function getEventCount() {
@@ -182,10 +293,24 @@ getEventCount()
     });
 
   }
-var eventNum = 0
+
+var eventNum = 0;
   function gotNum(numberOfEvents) {
-    console.log("eventNum: " + numberOfEvents)
-    eventNum = numberOfEvents
+    eventNum = numberOfEvents;
+  }
+
+  function showEventForm() {
+    $('#addEvent').show();
+    $('#addAdmissions').hide();
+    $('#chooseForm').hide();
+    $('#county-name').html("Add Event Data");
+  }
+
+  function showAdmissionsForm() {
+    $('#addAdmissions').show();
+    $('#addEvent').hide();
+    $('#chooseForm').hide();
+    $('#county-name').html("Add Admissions Data");
   }
 
 
@@ -218,6 +343,43 @@ var eventNum = 0
              });
   }
 
+  getAdmissionsCount();
+
+    function getAdmissionsCount() {
+    var num;
+    var database = firebase.database();
+    var ref = database.ref("Admissions");
+    ref.on("value", function(snapshot) {
+      number = (snapshot.numChildren())
+      gotAdmissionsNum(number + 1)
+
+    }, function(error) {
+      console.error(error);
+    });
+
+  }
+var admissionsNum = 0;
+
+function gotAdmissionsNum(numberOfEvents) {
+    admissionsNum = numberOfEvents;
+  }
+
+
+function admissionsSubmitFunction() {
+  var county = document.getElementById('adCountyInput').value;
+  var year = document.getElementById('adYearInput').value;
+  var numStudents = document.getElementById('adNumStudents').value;
+  writeAdUserData(admissionsNum, year, numStudents);   
+}
+
+function writeAdUserData(number, county, year, numStudents) {
+  firebase.database().ref('Admissions/' + number).set({
+    county: county,
+    year: year,
+    numStudents: numStudents
+  });
+}
+
 
 
 
@@ -234,6 +396,7 @@ var map = L.map('map').setView([32.5502, -86.2023], 7.2);
     map.scrollWheelZoom.disable();
     map.boxZoom.disable();
     map.keyboard.disable();
+    map.dragging.disable();
 
             var legend = L.control({position: 'bottomright'});
 
@@ -405,7 +568,7 @@ getAdmissionsDataSet();
 function getAdmissionsDataSet() {
   var database = firebase.database();
   var ref = database.ref("Admissions");
-  x = 0
+  x = 0;
   ref.once("value").then(function(snapshot){
         snapshot.forEach(function(snapshot){
               //dataset.push(snapshot.val());
@@ -428,7 +591,7 @@ function showPie(feature) {
         $('#toggleForm').css('background-color', '#FFFFFF');
         $('#toggleForm').css('color', '#0278C8');
         $('#about').hide();
-        $('#addEvent').hide();
+        $('#addData').hide();
 
 
         var filteredData = dataset.filter(function(item) {
@@ -454,13 +617,6 @@ function showPie(feature) {
         for(i = 0; i < filteredAdmissions.length; i++) {
           admissionNumber += filteredAdmissions[i].numStudents;
         }
-
-
-
-
-
-
-
 
 
 
@@ -509,6 +665,7 @@ function showPie(feature) {
             var height = 200;
             var radius = Math.min(width, height) / 2;
 
+
             var svg = d3.select('#svg_container')
               .append('svg')
               .attr('width', width)
@@ -517,7 +674,7 @@ function showPie(feature) {
               .attr('transform', 'translate(' + (width / 2) +
                 ',' + (height / 2) + ')');
 
-            var arc = d3.svg.arc()
+            var arc = d3.arc()
               .innerRadius(0)
               .outerRadius(radius);
 
@@ -532,16 +689,16 @@ function showPie(feature) {
 
 
 
-            var pie = d3.layout.pie()
+            var pie = d3.pie()
               .value(function(d) {return d.count; })
               .sort(null);
 
-                var tooltip = d3.select("#svg_container").append("div")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
+                // var tooltip = d3.select("#svg_container").append("div")
+                // .attr("class", "tooltip")
+                // .style("opacity", 0);
 
 
-            var path = svg.selectAll('path')
+            var path = svg.selectAll('.arc')
               .data(pie(d3Ready))
               .enter()
               .append('path')
@@ -554,7 +711,7 @@ function showPie(feature) {
                 }
             })
 
-            path.append("svg:text")
+            path.append("text")
               .attr("transform", function(d) { //set the label's origin to the center of the arc
                 //we have to make sure to set these before calling arc.centroid
                 d.outerRadius = radius + 50; // Set Outer Coordinate
@@ -615,17 +772,35 @@ function showPie(feature) {
 
     }
 
-    function showForm() {
-      if($('#addEvent').css('display') == 'none' ) {
-        $('#addEvent').show();
+    function showChoose() {
+      if($('#chooseForm').css('display') == 'none') {
+        $('#chooseForm').show();
+        $('#password').hide();
         $('#about').hide();
-        $('#county-name').html("Add Event");
+        $('#county-name').html("Add Data");
         $('#toggleForm').css('background-color', '#5FA6D6');
         $('#toggleForm').css('color', '#FFFFFF');
         $('#toggleAbout').css('background-color', '#FFFFFF');
         $('#toggleAbout').css('color', '#0278C8');
       } else {
-        $('#addEvent').hide();
+        $('#chooseForm').hide();
+        $('#county-name').html( "Hover over a county to learn more");
+        $('#toggleForm').css('background-color', '#FFFFFF');
+        $('#toggleForm').css('color', '#0278C8');
+      }
+    }
+
+    function showForm() {
+      if($('#addData').css('display') == 'none') {
+        $('#addData').show();
+        $('#about').hide();
+        $('#county-name').html("Add Data");
+        $('#toggleForm').css('background-color', '#5FA6D6');
+        $('#toggleForm').css('color', '#FFFFFF');
+        $('#toggleAbout').css('background-color', '#FFFFFF');
+        $('#toggleAbout').css('color', '#0278C8');
+      } else {
+        $('#addData').hide();
         $('#county-name').html( "Hover over a county to learn more");
         $('#toggleForm').css('background-color', '#FFFFFF');
         $('#toggleForm').css('color', '#0278C8');
@@ -635,7 +810,8 @@ function showPie(feature) {
     function showAbout() {
       if($('#about').css('display') == 'none' ) {
         $('#about').show();
-        $('#addEvent').hide();
+        $('#chooseForm').hide();
+        $('#addData').hide();
         $('#county-name').html("About This Map");
         $('#toggleAbout').css('background-color', '#5FA6D6');
         $('#toggleAbout').css('color', '#FFFFFF');
@@ -694,6 +870,9 @@ function showPie(feature) {
                     onEachFeature: onEachFeature
                 })
                 alCount.addTo(map);
+
+
+
 
     function getColor(feature) {
         // var rand = Math.floor((Math.random() * 10));
