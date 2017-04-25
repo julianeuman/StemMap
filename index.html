@@ -13,6 +13,7 @@
 <script src = "scripts/test.json"></script>
   <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase.js"></script>
   <script>
+
 // Initialize Firebase
   var config = {
     apiKey: "AIzaSyC8ndOOfFMWgaSeXpdP92qOVzfSc8GzYyw",
@@ -30,12 +31,15 @@
     <span id="title"> UAH STEM Map</span>
     <button id = "toggleAbout" onclick = "showAbout()">About This Map</button>
     <button id = "toggleForm" onclick = "showForm()">Add Data</button>
-    <!-- <span id="toggleAbout" >About This Map</span> -->
 </div>
+
+<!-- This is the sidebar - it's got a lot going on -->
 <div id = "sidebar" style = "background-color: #EEEEEE; height: 88%; width: 32%; float: left; margin-left: 1%">
     <div id = "county-name">Hover over a county to learn more</div>
     <div id = "num-events"></div>
     <div id = "no-data" style = "display: none">No data available for this county</div>
+
+<!-- About Sidebar Display -->
     <div id = "about" style = "display: none">
         This visualization is sponsored by UAH's STEM HELP website. The STEM Outreach map details events hosted by UAH groups for school children across Alabama to generate interest in STEM fields. These events are typically held at schools, libraries, or big event auditoriums and are then logged in a database. The groups currently included are SPARCC and ELMER. Admissions data is also included to aid in determining locations for future outreach events.
         <div id = "about-legend" style = "margin-top: 30px;">
@@ -49,7 +53,7 @@
         </div>
     </div>
 
-
+<!-- Form Sidebar Display -->
         <div id = "addData" style = "display: none">
       <div id = "password" style = "margin: 1%; padding: 2%;">
       <br>
@@ -234,7 +238,7 @@
     </div>
     </div>
 
-
+<!-- Visualization in Sidebar -->
     <div id = "svg_container" style = "width: 200px; height: 200px; text-align: center; margin-left: 120px; margin-top: 60px;"></div>
     <div id = "my-legend" style = "margin-left: 130px; margin-top: 30px; display: none;">
     <div class='legend-scale'>
@@ -248,6 +252,7 @@
     <div id = "admissions-num" style = "display:none"></div>
     </div>
 
+<!-- Map -->
 <div id="map" style = "float: right"></div>
 <script src="ui/external/jquery/jquery.js"></script>
 <script src="ui/jquery-ui.js"></script>
@@ -255,7 +260,7 @@
 <script>
 
 
-
+// Variables
 
 var bool2013 = true;
 var bool2014 = true;
@@ -268,19 +273,14 @@ var boolSPARCC = true;
 
 var database = firebase.database();
 
+var client = "jQSDA09XAbmqhF*@";
+
+
+
+//Database Functions - to line 423
 
 getEventCount();
 getAdmissionsCount();
-
-function checkPW() {
-  var pw = document.getElementById("pw-input").value;
-  if(pw !== "letmein") {
-    alert("Wrong Password. Try again");
-    document.getElementById("pw-input").value = "";
-  } else {
-    showChoose();
-  }
-}
 
 
   function getEventCount() {
@@ -300,20 +300,6 @@ function checkPW() {
 var eventNum = 0;
   function gotNum(numberOfEvents) {
     eventNum = numberOfEvents;
-  }
-
-  function showEventForm() {
-    $('#addEvent').show();
-    $('#addAdmissions').hide();
-    $('#chooseForm').hide();
-    $('#county-name').html("Add Event Data");
-  }
-
-  function showAdmissionsForm() {
-    $('#addAdmissions').show();
-    $('#addEvent').hide();
-    $('#chooseForm').hide();
-    $('#county-name').html("Add Admissions Data");
   }
 
 
@@ -386,6 +372,49 @@ function writeAdUserData(number, county, year, numStudents) {
 
 
 
+var d3Ready;
+var totalCount;
+var dataset = [];
+getDataSet();
+//calls firebase once on startup and collects the data at the point in time and puts in in the variable dataset
+function getDataSet() {
+  var ref = database.ref("Events");
+  i = 0
+  ref.once("value").then(function(snapshot){
+        snapshot.forEach(function(snapshot){
+              //dataset.push(snapshot.val());
+              dataset[i] = snapshot.val()
+
+
+              i = i + 1
+
+        });
+
+
+    });
+
+}
+var admissionsDataset = [];
+getAdmissionsDataSet();
+function getAdmissionsDataSet() {
+  var database = firebase.database();
+  var ref = database.ref("Admissions");
+  x = 0;
+  ref.once("value").then(function(snapshot){
+        snapshot.forEach(function(snapshot){
+              admissionsDataset[x] = snapshot.val()
+
+              x = x + 1
+
+        });
+
+
+    });
+
+}
+
+
+//Map Functions - to line 582
 
 var map = L.map('map').setView([32.5502, -86.2023], 7.2);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -449,8 +478,104 @@ var map = L.map('map').setView([32.5502, -86.2023], 7.2);
             legend.addTo(map);
             // L.geoJson(alCounties).addTo(map);
 
-        var Yearfilters = document.getElementById('years').filters;
-        var Typefilters = document.getElementById('events').filters;
+
+        function highlightFeature(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    fillColor: 'grey',
+                    weight: 2,
+                    color: 'white',
+                    // color: '#f40539',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+
+                if (!L.Browser.ie && !L.Browser.opera) {
+                    layer.bringToFront();
+                }
+        }
+
+        function clickHighlight(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    fillColor: 'white',
+                    weight: 2,
+                    color: 'white',
+                    // color: '#f40539',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+
+                if (!L.Browser.ie && !L.Browser.opera) {
+                    layer.bringToFront();
+                }
+        }
+
+        function eraseName(feature) {
+        document.getElementById('county-name').innerHTML = "Hover over a county to learn more";
+        document.getElementById('num-events').innerHTML = "";
+        document.getElementById('admissions-num').innerHTML = "";
+    }
+
+    function countyName(feature) {
+        return feature.properties.name;
+    }
+
+    function resetHighlight(e) {
+                alCount.resetStyle(e.target);
+    }
+
+    function onEachFeature(feature, layer) {
+            layer.on({
+                mouseover: function(e) {
+                    showPie(feature);
+                    highlightFeature(e);
+                    writeName(feature);
+                },
+                mouseout: function (e) {
+                    hideNoData();
+                    resetHighlight(e);
+                    eraseName(feature);
+                    hidePie();
+                }
+            });
+    }
+
+        var alCount =   L.geoJson(alCounties,
+                {style: function(feature) {
+                    var color = getColor(feature);
+                    return {
+                            fillColor: color,
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            dashArray: '3',
+                            fillOpacity: 0.95
+                        }
+                    },
+                    onEachFeature: onEachFeature
+                })
+                alCount.addTo(map);
+
+function getColor(feature) {
+        // var rand = Math.floor((Math.random() * 10));
+        // var colors = ["#0278C8", "#0A82CF", "#2B8FD3", "#449BD6", "#5FA8DB", "#78B4DF", "#90C0E3", "#A9CDE6", "#C1DAEB", "#D9E5ED"];
+        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
+        return colors[feature.properties.num];
+        // return colors[totalCount];
+    }
+
+function getColor2(num) {
+        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
+        return colors[num];
+}
+
+//Filters Functions - to line 643
+
+var Yearfilters = document.getElementById('years').filters;
+var Typefilters = document.getElementById('events').filters;
 
 function filter2013() {
     if(Yearfilters[0].checked) {
@@ -509,85 +634,8 @@ function filterSPARCC() {
 };
 
 
-        function highlightFeature(e) {
-                var layer = e.target;
+//Show and Hide Sidebar Element Functions - to end
 
-                layer.setStyle({
-                    fillColor: 'grey',
-                    weight: 2,
-                    color: 'white',
-                    // color: '#f40539',
-                    dashArray: '',
-                    fillOpacity: 0.7
-                });
-
-                if (!L.Browser.ie && !L.Browser.opera) {
-                    layer.bringToFront();
-                }
-        }
-
-        function clickHighlight(e) {
-                var layer = e.target;
-
-                layer.setStyle({
-                    fillColor: 'white',
-                    weight: 2,
-                    color: 'white',
-                    // color: '#f40539',
-                    dashArray: '',
-                    fillOpacity: 0.7
-                });
-
-                if (!L.Browser.ie && !L.Browser.opera) {
-                    layer.bringToFront();
-                }
-        }
-
-
-
-var d3Ready;
-var totalCount;
-var dataset = [];
-getDataSet();
-//calls firebase once on startup and collects the data at the point in time and puts in in the variable dataset
-function getDataSet() {
-  var ref = database.ref("Events");
-  i = 0
-  ref.once("value").then(function(snapshot){
-        snapshot.forEach(function(snapshot){
-              //dataset.push(snapshot.val());
-              dataset[i] = snapshot.val()
-
-
-              i = i + 1
-
-        });
-
-
-    });
-
-}
-var admissionsDataset = [];
-getAdmissionsDataSet();
-function getAdmissionsDataSet() {
-  var database = firebase.database();
-  var ref = database.ref("Admissions");
-  x = 0;
-  ref.once("value").then(function(snapshot){
-        snapshot.forEach(function(snapshot){
-              //dataset.push(snapshot.val());
-              admissionsDataset[x] = snapshot.val()
-              // console.log(x)
-
-              x = x + 1
-
-        });
-
-
-    });
-
-}
-// console.log(admissionsDataset)
 function showPie(feature) {
 
         $('#toggleAbout').css('background-color', '#FFFFFF');
@@ -697,9 +745,6 @@ function showPie(feature) {
               .value(function(d) {return d.count; })
               .sort(null);
 
-                // var tooltip = d3.select("#svg_container").append("div")
-                // .attr("class", "tooltip")
-                // .style("opacity", 0);
 
 
             var path = svg.selectAll('.arc')
@@ -730,7 +775,6 @@ function showPie(feature) {
             path.filter(function(d) { return d.endAngle - d.startAngle > .2; }).append("svg:text")
               .attr("dy", ".35em")
               .attr("text-anchor", "middle")
-              //.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")rotate(" + angle(d) + ")"; })
               .attr("transform", function(d) { //set the label's origin to the center of the arc
                 //we have to make sure to set these before calling arc.centroid
                 d.outerRadius = radius; // Set Outer Coordinate
@@ -747,6 +791,20 @@ function showPie(feature) {
                 }
           }
 
+    }
+
+    function showEventForm() {
+        $('#addEvent').show();
+        $('#addAdmissions').hide();
+        $('#chooseForm').hide();
+        $('#county-name').html("Add Event Data");
+    }
+
+    function showAdmissionsForm() {
+        $('#addAdmissions').show();
+        $('#addEvent').hide();
+        $('#chooseForm').hide();
+        $('#county-name').html("Add Admissions Data");
     }
 
 
@@ -770,9 +828,7 @@ function showPie(feature) {
     function writeName(feature) {
         var countyname = feature.properties.name;
         document.getElementById('county-name').innerHTML = feature.properties.name + " County";
-        //console.log(d3Ready)
     document.getElementById('num-events').innerHTML = d3Ready.totalCount + " events total";
-        // document.getElementById('num-events').innerHTML = feature.properties.num + " events total";
 
     }
 
@@ -829,66 +885,14 @@ function showPie(feature) {
       }
     }
 
-    function eraseName(feature) {
-        document.getElementById('county-name').innerHTML = "Hover over a county to learn more";
-        document.getElementById('num-events').innerHTML = "";
-        document.getElementById('admissions-num').innerHTML = "";
-    }
-
-    function countyName(feature) {
-        return feature.properties.name;
-    }
-
-    function resetHighlight(e) {
-                alCount.resetStyle(e.target);
-    }
-
-    function onEachFeature(feature, layer) {
-            layer.on({
-                mouseover: function(e) {
-                    showPie(feature);
-                    highlightFeature(e);
-                    writeName(feature);
-                },
-                mouseout: function (e) {
-                    hideNoData();
-                    resetHighlight(e);
-                    eraseName(feature);
-                    hidePie();
-                }
-            });
-    }
-
-        var alCount =   L.geoJson(alCounties,
-                {style: function(feature) {
-                    var color = getColor(feature);
-                    return {
-                            fillColor: color,
-                            weight: 2,
-                            opacity: 1,
-                            color: 'white',
-                            dashArray: '3',
-                            fillOpacity: 0.95
-                        }
-                    },
-                    onEachFeature: onEachFeature
-                })
-                alCount.addTo(map);
-
-
-
-
-    function getColor(feature) {
-        // var rand = Math.floor((Math.random() * 10));
-        // var colors = ["#0278C8", "#0A82CF", "#2B8FD3", "#449BD6", "#5FA8DB", "#78B4DF", "#90C0E3", "#A9CDE6", "#C1DAEB", "#D9E5ED"];
-        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
-        return colors[feature.properties.num];
-        // return colors[totalCount];
-    }
-
-    function getColor2(num) {
-        var colors = ["#D9E5ED", "#C1DAEB", "#A9CDE6", "#90C0E3", "#78B4DF", "#5FA8DB", "#449BD6", "#2B8FD3", "#0A82CF", "#0278C8"];
-        return colors[num];
+    function checkPW() {
+      var pw = document.getElementById("pw-input").value;
+      if(pw !== client) {
+        alert("Wrong Password. Try again");
+        document.getElementById("pw-input").value = "";
+      } else {
+        showChoose();
+      }
     }
 
 
