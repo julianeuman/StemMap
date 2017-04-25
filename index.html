@@ -832,6 +832,16 @@ function showPie(feature) {
 
     }
 
+    function checkPW() {
+      var pw = document.getElementById("pw-input").value;
+      if(pw !== client) {
+        alert("Wrong Password. Try again");
+        document.getElementById("pw-input").value = "";
+      } else {
+        showChoose();
+      }
+    }
+
     function showChoose() {
       if($('#chooseForm').css('display') == 'none') {
         $('#chooseForm').show();
@@ -882,16 +892,6 @@ function showPie(feature) {
         $('#toggleAbout').css('background-color', '#FFFFFF');
         $('#toggleAbout').css('color', '#0278C8');
         $('#county-name').html( "Hover over a county to learn more");
-      }
-    }
-
-    function checkPW() {
-      var pw = document.getElementById("pw-input").value;
-      if(pw !== client) {
-        alert("Wrong Password. Try again");
-        document.getElementById("pw-input").value = "";
-      } else {
-        showChoose();
       }
     }
 
